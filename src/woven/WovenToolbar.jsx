@@ -18,7 +18,7 @@ const WovenToolbar = ({
   const filteredTemplates = wovenTemplates.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
-    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '250px', fontFamily: 'var(--font-woven-body)' }}>
+    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', fontFamily: 'var(--font-woven-body)' }}>
 
       <div>
         <h3 style={{ marginBottom: '16px', color: 'var(--text-secondary)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Grid Size</h3>

@@ -64,7 +64,7 @@ const WovenIntelligence = ({
   const weftPct = 100 - warpPct;
 
   return (
-    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '300px', fontFamily: 'var(--font-woven-body)' }}>
+    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', fontFamily: 'var(--font-woven-body)' }}>
       
       <div className="slide-fade-in" key={structureName}>
         <h3 style={{ color: 'var(--text-secondary)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Structure</h3>

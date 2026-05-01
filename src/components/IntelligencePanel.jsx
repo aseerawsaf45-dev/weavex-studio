@@ -46,7 +46,7 @@ const IntelligencePanel = ({
   };
 
   return (
-    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '300px' }}>
+    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
       
       <div className="slide-fade-in" key={structureName}>
         <h3 style={{ color: 'var(--text-secondary)', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Detected Structure</h3>

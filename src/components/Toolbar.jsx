@@ -26,7 +26,7 @@ const Toolbar = ({
   const visibleTemplates = searchQuery ? filteredTemplates : (showAllTemplates ? templates : templates.slice(0, 4));
 
   return (
-    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '250px' }}>
+    <div className="card" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', fontFamily: 'var(--font-body)' }}>
       
       <div>
         <h3 style={{ marginBottom: '16px', color: 'var(--text-secondary)', fontSize: '14px', textTransform: 'uppercase', letterSpacing: '1px' }}>Tools</h3>
