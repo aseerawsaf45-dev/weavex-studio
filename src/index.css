@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap');
+
+:root {
+  --bg-base: #0F1117;          /* Near-black, deep navy-charcoal */
+  --bg-surface: #181C27;       /* Card/panel backgrounds */
+  --bg-elevated: #1F2436;      /* Elevated elements */
+  --border: #2A3050;           /* Subtle borders */
+  --accent-primary: #4EFFC5;   /* Electric mint — primary CTA, active states */
+  --accent-secondary: #7B61FF; /* Electric violet — secondary highlights */
+  --knit-color: #4EFFC5;       /* Mint for Knit loops */
+  --tuck-color: #FFB830;       /* Warm amber for Tuck */
+  --miss-color: #FF5F7E;       /* Coral-rose for Miss */
+  --text-primary: #EDF2FF;     /* Near-white text */
+  --text-secondary: #8892AA;   /* Muted labels */
+  --text-accent: #4EFFC5;      /* Mint accent text */
+
+  /* Woven Specific Colors */
+  --bg-grid: #10131E;            /* Grid canvas background */
+  --border-strong: #3A4560;      /* Emphasized borders, grid lines */
+  --warp-color: #4A6FD4;         /* Warp threads — clear blue */
+  --weft-color: #C8A96E;         /* Weft threads — warm linen/gold */
+  --warp-up: #3B2FBF;            /* Warp-up cell — deep indigo */
+  --weft-up: #D4B896;            /* Weft-up cell — warm linen */
+  --accent-shaft: #7C5CBF;       /* Shaft purple — threading highlights */
+  --accent-treadle: #2EB88A;     /* Treadle teal — treadling highlights */
+  --text-mono: #A0BFFF;          /* Monospace accents — grid numbers */
+  --danger: #E05555;             /* Float length warnings */
+  --success: #3ECF8E;            /* Validation success */
+
+  --font-display: 'DM Serif Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Sora', sans-serif;
+  
+  --font-woven-display: 'Playfair Display', serif;
+  --font-woven-mono: 'IBM Plex Mono', monospace;
+  --font-woven-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: normal;
+}
+
+.mono {
+  font-family: var(--font-mono);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes pulseScale {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@keyframes dashOffset {
+  to { stroke-dashoffset: -20; }
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.slide-fade-in {
+  animation: slideFadeIn 0.3s ease forwards;
+}
+
+.pulse-cell {
+  animation: pulseScale 0.15s ease-out;
+}
+
+/* UI Elements */
+button {
+  font-family: var(--font-body);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  transition: all 0.2s ease;
+}
+
+input, select {
+  font-family: var(--font-body);
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.btn-primary {
+  background: var(--accent-primary);
+  color: var(--bg-base);
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.btn-primary:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 4px;
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent-secondary);
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
