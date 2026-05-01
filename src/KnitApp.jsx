@@ -147,10 +147,7 @@ function KnitApp({ onNavigateHome }) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
       
       {/* Header */}
-      <header style={{ 
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-        padding: '16px 24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)' 
-      }}>
+      <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           {onNavigateHome && (
             <button className="btn-secondary" onClick={onNavigateHome} style={{ marginRight: '16px', padding: '4px 8px' }}>
@@ -160,7 +157,7 @@ function KnitApp({ onNavigateHome }) {
           <h1 style={{ color: 'var(--accent-primary)', fontSize: '24px', margin: 0 }}>KnitCAD Pro</h1>
           <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Fabric Structure Design</span>
         </div>
-        <div style={{ display: 'flex', gap: '16px' }}>
+        <div className="header-actions">
           <button className="btn-secondary" onClick={() => exportToCSV(grid)} title="Export CSV" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Download size={16} /> CSV
           </button>
@@ -174,10 +171,10 @@ function KnitApp({ onNavigateHome }) {
       </header>
 
       {/* Main Workspace */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="workspace-container knit-app">
         
         {/* Left Sidebar */}
-        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px', overflowY: 'auto', borderRight: '1px solid var(--border)' }}>
+        <div className="sidebar-left" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px' }}>
           <div>
             <Toolbar 
               currentTool={currentTool} setCurrentTool={setCurrentTool}
@@ -195,7 +192,7 @@ function KnitApp({ onNavigateHome }) {
         </div>
 
         {/* Center Canvas */}
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'auto', background: 'var(--bg-base)', padding: '24px' }}>
+        <div className="center-canvas" style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-base)', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--text-secondary)' }}>
             Grid Size: {wales}W × {courses}C
           </div>
@@ -210,7 +207,7 @@ function KnitApp({ onNavigateHome }) {
         </div>
 
         {/* Right Sidebar */}
-        <div style={{ padding: '24px', overflowY: 'auto', borderLeft: '1px solid var(--border)' }}>
+        <div className="sidebar-right" style={{ padding: '24px' }}>
           <IntelligencePanel 
             structureName={structureName}
             confidence={confidence}

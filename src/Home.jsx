@@ -6,13 +6,13 @@ const Home = ({ onSelectMode }) => {
       <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '64px', color: 'var(--text-primary)', marginBottom: '16px' }}>WeaveX</h1>
       <p style={{ color: 'var(--text-secondary)', fontSize: '18px', marginBottom: '48px' }}>Select a textile design environment to begin.</p>
       
-      <div style={{ display: 'flex', gap: '32px' }}>
+      <div className="home-cards">
         {/* KnitCAD Card */}
         <div 
           onClick={() => onSelectMode('knit')}
           className="card" 
           style={{ 
-            width: '320px', padding: '32px', cursor: 'pointer', transition: 'all 0.3s ease',
+            width: '100%', maxWidth: '320px', padding: '32px', cursor: 'pointer', transition: 'all 0.3s ease',
             border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center'
           }}
           onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent-primary)'; e.currentTarget.style.transform = 'translateY(-4px)'; }}
@@ -32,7 +32,7 @@ const Home = ({ onSelectMode }) => {
           onClick={() => onSelectMode('woven')}
           className="card" 
           style={{ 
-            width: '320px', padding: '32px', cursor: 'pointer', transition: 'all 0.3s ease',
+            width: '100%', maxWidth: '320px', padding: '32px', cursor: 'pointer', transition: 'all 0.3s ease',
             border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', alignItems: 'center',
             backgroundColor: 'var(--bg-grid)'
           }}

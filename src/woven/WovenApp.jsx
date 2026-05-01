@@ -278,17 +278,13 @@ function WovenApp({ onNavigateHome }) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--bg-base)' }}>
 
       {/* Header */}
-      <header style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        padding: '12px 24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-surface)',
-        flexShrink: 0
-      }}>
+      <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button className="btn-secondary" onClick={onNavigateHome} style={{ padding: '4px 12px' }}>← Home</button>
           <h1 style={{ fontFamily: 'var(--font-woven-display)', color: 'var(--accent-primary)', fontSize: '22px', margin: 0 }}>WeaveDraft</h1>
           <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Professional Drafting Studio</span>
         </div>
-        <div style={{ display: 'flex', gap: '12px' }}>
+        <div className="header-actions">
           <button className="btn-primary" onClick={handleExportWIF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Download size={14} /> Export WIF
           </button>
@@ -296,10 +292,10 @@ function WovenApp({ onNavigateHome }) {
       </header>
 
       {/* Main Workspace */}
-      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+      <div className="workspace-container woven-app">
 
         {/* Left Sidebar */}
-        <div style={{ width: '260px', flexShrink: 0, padding: '16px', overflowY: 'auto', borderRight: '1px solid var(--border)', background: 'var(--bg-surface)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="sidebar-left" style={{ width: '260px', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <WovenToolbar
               mode="direct"
@@ -318,8 +314,8 @@ function WovenApp({ onNavigateHome }) {
         </div>
 
         {/* Center: 3-Panel Editor (L-Shape Layout) */}
-        <div style={{
-          flex: 1, overflow: 'auto', padding: '32px',
+        <div className="center-canvas" style={{
+          padding: '32px',
           display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
           background: 'var(--bg-grid)'
         }}>
@@ -356,7 +352,7 @@ function WovenApp({ onNavigateHome }) {
         </div>
 
         {/* Right Sidebar: Intelligence */}
-        <div style={{ width: '240px', flexShrink: 0, padding: '16px', overflowY: 'auto', borderLeft: '1px solid var(--border)', background: 'var(--bg-surface)' }}>
+        <div className="sidebar-right" style={{ width: '240px', padding: '16px' }}>
           <WovenIntelligence
             structureName={structureName}
             confidence={confidence}
