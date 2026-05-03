@@ -5,7 +5,8 @@ import { CELL_STATE, computeLiftDrawdown, convertToLiftPlan, createEmptyGrid } f
 import { detectRepeatSize, analyzeFloats, detectWeaveStructure } from './utils/weaveDetection';
 import { exportWIF } from './utils/weaveExport';
 import { wovenTemplates } from './utils/wovenTemplatesData';
-import { Download } from 'lucide-react';
+import { Download, Image as ImageIcon } from 'lucide-react';
+import html2canvas from 'html2canvas';
 
 const Cell = ({ filled, onClick, size = 28 }) => {
   return (
@@ -235,6 +236,24 @@ function WovenApp({ onNavigateHome }) {
     exportWIF({ threading, tieup, treadling, drawdown, warpEnds, weftPicks, numShafts, numTreadles, sett: 20, ppi: 20 });
   };
 
+  const handleExportPNG = async () => {
+    const element = document.getElementById('woven-export-area');
+    if (!element) return;
+    try {
+      const canvas = await html2canvas(element, {
+        backgroundColor: '#10131E', // Match --bg-grid
+        scale: 2 // High resolution
+      });
+      const dataUrl = canvas.toDataURL('image/png');
+      const link = document.createElement('a');
+      link.download = `weave-draft-${new Date().getTime()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error('Error exporting PNG', err);
+    }
+  };
+
   const loadTemplate = (template) => {
     setWarpEnds(template.warpEnds);
     setWeftPicks(template.weftPicks);
@@ -261,7 +280,10 @@ function WovenApp({ onNavigateHome }) {
           <h1 style={{ fontFamily: 'var(--font-woven-display)', color: 'var(--accent-primary)', fontSize: '22px', margin: 0 }}>WeaveDraft</h1>
           <span style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Professional Drafting Studio</span>
         </div>
-        <div className="header-actions">
+        <div className="header-actions" style={{ display: 'flex', gap: '8px' }}>
+          <button className="btn-secondary" onClick={handleExportPNG} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <ImageIcon size={14} /> Export PNG
+          </button>
           <button className="btn-primary" onClick={handleExportWIF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Download size={14} /> Export WIF
           </button>
@@ -291,7 +313,7 @@ function WovenApp({ onNavigateHome }) {
         </div>
 
         {/* Center: 3-Panel Editor (L-Shape Layout) */}
-        <div className="center-canvas" style={{
+        <div id="woven-export-area" className="center-canvas" style={{
           padding: '32px',
           display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
           background: 'var(--bg-grid)'
