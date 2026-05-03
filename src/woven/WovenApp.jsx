@@ -7,11 +7,10 @@ import { exportWIF } from './utils/weaveExport';
 import { wovenTemplates } from './utils/wovenTemplatesData';
 import { Download } from 'lucide-react';
 
-const Cell = ({ filled, onClick, onMouseEnter, size = 28 }) => {
+const Cell = ({ filled, onClick, size = 28 }) => {
   return (
     <div
       onClick={onClick}
-      onMouseEnter={onMouseEnter}
       style={{
         width: size, height: size,
         background: 'var(--bg-grid)',
@@ -34,13 +33,8 @@ const Cell = ({ filled, onClick, onMouseEnter, size = 28 }) => {
 
 // ─── Drafting Grid (Threading: shafts × warp ends) ───────────────────────────
 const DraftingGrid = ({ threading, setThreading, numShafts, warpEnds }) => {
-  const [isPainting, setIsPainting] = useState(false);
-  const [paintValue, setPaintValue] = useState(CELL_STATE.MARKED);
-
-  const toggle = (s, c, force) => {
-    const next = (force !== undefined)
-      ? force
-      : (threading[s][c] === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED);
+  const toggle = (s, c) => {
+    const next = threading[s][c] === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED;
     const newTh = threading.map(row => [...row]);
     // Each warp end can only be on ONE shaft
     for (let i = 0; i < numShafts; i++) newTh[i][c] = CELL_STATE.EMPTY;
@@ -70,8 +64,7 @@ const DraftingGrid = ({ threading, setThreading, numShafts, warpEnds }) => {
               <Cell
                 key={c}
                 filled={cell === CELL_STATE.MARKED}
-                onClick={() => { const v = cell === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED; setPaintValue(v); toggle(s, c, v); setIsPainting(true); }}
-                onMouseEnter={() => { if (isPainting) toggle(s, c, paintValue); }}
+                onClick={() => toggle(s, c)}
               />
             ))}
           </div>
@@ -83,13 +76,8 @@ const DraftingGrid = ({ threading, setThreading, numShafts, warpEnds }) => {
 
 // ─── Lifting Plan Grid (Peg Plan: weft picks × shafts) ───────────────────────
 const LiftingGrid = ({ liftPlan, setLiftPlan, numShafts, weftPicks }) => {
-  const [isPainting, setIsPainting] = useState(false);
-  const [paintValue, setPaintValue] = useState(CELL_STATE.MARKED);
-
-  const toggle = (p, s, force) => {
-    const next = (force !== undefined)
-      ? force
-      : (liftPlan[p][s] === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED);
+  const toggle = (p, s) => {
+    const next = liftPlan[p][s] === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED;
     const newLp = liftPlan.map(row => [...row]);
     newLp[p][s] = next;
     setLiftPlan(newLp);
@@ -117,8 +105,7 @@ const LiftingGrid = ({ liftPlan, setLiftPlan, numShafts, weftPicks }) => {
               <Cell
                 key={s}
                 filled={cell === CELL_STATE.MARKED}
-                onClick={() => { const v = cell === CELL_STATE.MARKED ? CELL_STATE.EMPTY : CELL_STATE.MARKED; setPaintValue(v); toggle(p, s, v); setIsPainting(true); }}
-                onMouseEnter={() => { if (isPainting) toggle(p, s, paintValue); }}
+                onClick={() => toggle(p, s)}
               />
             ))}
           </div>
@@ -130,13 +117,8 @@ const LiftingGrid = ({ liftPlan, setLiftPlan, numShafts, weftPicks }) => {
 
 // ─── Weaving Plan Grid (Drawdown: weft picks × warp ends) ────────────────────
 const WeavingGrid = ({ drawdown, setDrawdown, warpEnds, weftPicks }) => {
-  const [isPainting, setIsPainting] = useState(false);
-  const [paintValue, setPaintValue] = useState(CELL_STATE.WARP_UP);
-
-  const toggle = (r, c, force) => {
-    const next = (force !== undefined)
-      ? force
-      : (drawdown[r][c] === CELL_STATE.WARP_UP ? CELL_STATE.WEFT_UP : CELL_STATE.WARP_UP);
+  const toggle = (r, c) => {
+    const next = drawdown[r][c] === CELL_STATE.WARP_UP ? CELL_STATE.WEFT_UP : CELL_STATE.WARP_UP;
     const newDd = drawdown.map(row => [...row]);
     newDd[r][c] = next;
     setDrawdown(newDd);
@@ -156,24 +138,19 @@ const WeavingGrid = ({ drawdown, setDrawdown, warpEnds, weftPicks }) => {
           <div key={c} style={{ width: 32, textAlign: 'center', fontSize: '9px', color: 'var(--text-secondary)' }}>{c + 1}</div>
         ))}
       </div>
-      <div
-        style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}
-        onMouseLeave={() => setIsPainting(false)}
-        onMouseUp={() => setIsPainting(false)}
-      >
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
         {drawdown.map((row, r) => (
           <div key={r} style={{ display: 'flex', alignItems: 'center', gap: '1px' }}>
             <div style={{ width: 28, fontSize: '9px', color: 'var(--text-secondary)', textAlign: 'right', paddingRight: '4px', flexShrink: 0 }}>P{weftPicks - r}</div>
             {row.map((cell, c) => (
               <div
                 key={c}
-                onMouseDown={() => { const v = cell === CELL_STATE.WARP_UP ? CELL_STATE.WEFT_UP : CELL_STATE.WARP_UP; setPaintValue(v); toggle(r, c, v); setIsPainting(true); }}
-                onMouseEnter={() => { if (isPainting) toggle(r, c, paintValue); }}
+                onClick={() => toggle(r, c)}
                 style={{
                   width: 32, height: 32,
                   background: 'var(--bg-grid)',
                   border: '1px solid var(--border-strong)',
-                  cursor: 'crosshair',
+                  cursor: 'pointer',
                   userSelect: 'none',
                   display: 'flex',
                   alignItems: 'center',
