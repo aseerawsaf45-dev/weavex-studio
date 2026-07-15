@@ -11,17 +11,20 @@ const GridEditor = ({
   repeatUnit,
   onHistoryChange
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
   const containerRef = useRef(null);
-
-  // Stop dragging if mouse leaves the whole canvas area or mouse comes up
-  useEffect(() => {
-    const handleMouseUp = () => setIsDragging(false);
-    window.addEventListener('mouseup', handleMouseUp);
-    return () => window.removeEventListener('mouseup', handleMouseUp);
-  }, []);
+  const lastActionRef = useRef({ r: -1, c: -1, time: 0 });
 
   const handleCellAction = (r, c, overrideType = null) => {
+    const now = Date.now();
+    // Prevent duplicate updates on the same cell, or instant adjacent phantom updates within 30ms (hardware bounce)
+    if (
+      (lastActionRef.current.r === r && lastActionRef.current.c === c && now - lastActionRef.current.time < 100) ||
+      (now - lastActionRef.current.time < 30) // Anti-phantom-click for adjacent cells
+    ) {
+      return; 
+    }
+    lastActionRef.current = { r, c, time: now };
+
     const newGrid = grid.map(row => [...row]);
     
     if (overrideType !== null) {
@@ -31,9 +34,6 @@ const GridEditor = ({
     } else if (currentTool === 'eraser') {
       newGrid[r][c] = LOOP_TYPES.EMPTY;
     } else if (currentTool === 'fill') {
-      // Basic flood fill implementation could go here. 
-      // For now, let's keep it simple: just fill the clicked cell.
-      // (Full flood fill algorithm would go here)
       newGrid[r][c] = currentLoopType;
     }
 
@@ -44,21 +44,17 @@ const GridEditor = ({
   const onMouseDown = (e, r, c) => {
     e.preventDefault(); // Prevent text selection
     if (e.button === 2) {
-      // Right click -> erase
       handleCellAction(r, c, LOOP_TYPES.EMPTY);
     } else {
-      setIsDragging(true);
       handleCellAction(r, c);
     }
   };
 
   const onMouseEnter = (e, r, c) => {
-    if (isDragging) {
-      if (e.buttons === 2) {
-        handleCellAction(r, c, LOOP_TYPES.EMPTY);
-      } else {
-        handleCellAction(r, c);
-      }
+    if (e.buttons === 1) { // Left click is held down
+      handleCellAction(r, c);
+    } else if (e.buttons === 2) { // Right click is held down
+      handleCellAction(r, c, LOOP_TYPES.EMPTY);
     }
   };
 
@@ -67,13 +63,14 @@ const GridEditor = ({
   };
 
   const renderCellContent = (type) => {
+    const contentClass = type !== LOOP_TYPES.EMPTY ? 'pulse-cell' : '';
     switch (type) {
       case LOOP_TYPES.KNIT:
-        return <div style={{ color: 'var(--knit-color)', fontSize: '20px' }}>●</div>;
+        return <div className={contentClass} style={{ color: 'var(--knit-color)', fontSize: '20px' }}>●</div>;
       case LOOP_TYPES.TUCK:
-        return <div style={{ color: 'var(--tuck-color)', fontSize: '20px', fontWeight: 'bold' }}>∩</div>;
+        return <div className={contentClass} style={{ color: 'var(--tuck-color)', fontSize: '20px', fontWeight: 'bold' }}>∩</div>;
       case LOOP_TYPES.MISS:
-        return <div style={{ color: 'var(--miss-color)', fontSize: '20px', fontWeight: 'bold' }}>─</div>;
+        return <div className={contentClass} style={{ color: 'var(--miss-color)', fontSize: '20px', fontWeight: 'bold' }}>─</div>;
       default:
         return null;
     }
@@ -84,15 +81,16 @@ const GridEditor = ({
     let styles = {};
     if (!repeatUnit || repeatUnit.width === 0 || repeatUnit.height === 0) return styles;
     
+    // Bottom-left corner block
     const isRepeatCol = c < repeatUnit.width;
-    const isRepeatRow = r < repeatUnit.height;
+    const isRepeatRow = r >= courses - repeatUnit.height;
 
     if (isRepeatCol && isRepeatRow) {
       // It's inside the repeat unit
       if (c === repeatUnit.width - 1) styles.borderRight = '2px dashed var(--accent-primary)';
-      if (r === repeatUnit.height - 1) styles.borderBottom = '2px dashed var(--accent-primary)';
+      if (r === courses - repeatUnit.height) styles.borderTop = '2px dashed var(--accent-primary)';
       if (c === 0) styles.borderLeft = '2px dashed var(--accent-primary)';
-      if (r === 0) styles.borderTop = '2px dashed var(--accent-primary)';
+      if (r === courses - 1) styles.borderBottom = '2px dashed var(--accent-primary)';
     }
 
     return styles;
@@ -146,13 +144,14 @@ const GridEditor = ({
                     justifyContent: 'center',
                     cursor: currentTool === 'eraser' ? 'cell' : 'pointer',
                     userSelect: 'none',
+                    touchAction: 'none',
                     position: 'relative',
                     transition: 'background 0.1s, transform 0.05s',
                     ...getCellBorderStyles(r, c)
                   }}
                   onMouseDown={(e) => onMouseDown(e, r, c)}
                   onMouseEnter={(e) => onMouseEnter(e, r, c)}
-                  className={`grid-cell ${cellType !== LOOP_TYPES.EMPTY ? 'pulse-cell' : ''}`}
+                  className="grid-cell"
                 >
                   {renderCellContent(cellType)}
                 </div>

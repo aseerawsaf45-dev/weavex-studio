@@ -4,8 +4,10 @@ const makeGrid = (w, h, data) => {
   const grid = [];
   for(let r=0; r<h; r++) {
     const row = [];
+    const rFromBottom = h - 1 - r;
+    const dataR = rFromBottom % data.length;
     for(let c=0; c<w; c++) {
-      row.push(data[r % data.length][c % data[0].length]);
+      row.push(data[dataR][c % data[0].length]);
     }
     grid.push(row);
   }
@@ -20,6 +22,7 @@ const E = LOOP_TYPES.EMPTY;
 export const templates = [
   // 1. Plain Jersey
   { name: 'Plain Jersey', wales: 4, courses: 4, data: makeGrid(4, 4, [[K]]) },
+  { name: 'Double Jersey', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, K, M, M], [M, M, K, K]]) },
   
   // 2. Rib Structures
   { name: '1×1 Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, M]]) },
@@ -27,6 +30,7 @@ export const templates = [
   { name: '3×1 Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, K, K, M]]) },
   { name: 'Milano Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, K], [K, M], [M, K]]) },
   { name: 'Fisherman Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, M], [T, K], [K, M], [T, K]]) },
+  { name: 'Polka Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, T], [M, K]]) },
   
   // 3. Purl Structures
   { name: 'Full Purl', wales: 4, courses: 4, data: makeGrid(4, 4, [[K], [M]]) },
@@ -119,8 +123,10 @@ export const templates = [
   // 23. Honeycomb Fabrics
   { name: 'Knit + Tuck Honeycomb', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, T, K, T], [K, K, K, K], [T, K, T, K], [K, K, K, K]]) },
 
-  // 24. Pique Structures
+  // 24. Pique & Lacoste Structures
   { name: 'Polo-Shirt Texture', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, M, K, M], [K, K, K, K], [M, K, M, K], [K, K, K, K]]) },
+  { name: 'Single Lacoste', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, T], [K, K], [T, K], [K, K]]) },
+  { name: 'Double Lacoste', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, T], [K, T], [T, K], [T, K]]) },
 
   // 25. Ottoman Structures
   { name: 'Horizontal Cord', wales: 4, courses: 8, data: makeGrid(4, 8, [[K], [K], [K], [M], [M], [M]]) },
