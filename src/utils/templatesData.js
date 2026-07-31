@@ -22,7 +22,6 @@ const E = LOOP_TYPES.EMPTY;
 export const templates = [
   // 1. Plain Jersey
   { name: 'Plain Jersey', wales: 4, courses: 4, data: makeGrid(4, 4, [[K]]) },
-  { name: 'Double Jersey', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, K, M, M], [M, M, K, K]]) },
   
   // 2. Rib Structures
   { name: '1×1 Rib', wales: 4, courses: 4, data: makeGrid(4, 4, [[K, M]]) },

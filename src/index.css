@@ -1,40 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=JetBrains+Mono:wght@400;600&family=Sora:wght@300;400;500;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Comfortaa:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 :root {
-  --bg-base: #0F1117;          /* Near-black, deep navy-charcoal */
-  --bg-surface: #181C27;       /* Card/panel backgrounds */
-  --bg-elevated: #1F2436;      /* Elevated elements */
-  --border: #2A3050;           /* Subtle borders */
-  --accent-primary: #4EFFC5;   /* Electric mint — primary CTA, active states */
-  --accent-secondary: #7B61FF; /* Electric violet — secondary highlights */
-  --knit-color: #4EFFC5;       /* Mint for Knit loops */
-  --tuck-color: #FFB830;       /* Warm amber for Tuck */
-  --miss-color: #FF5F7E;       /* Coral-rose for Miss */
-  --text-primary: #EDF2FF;     /* Near-white text */
-  --text-secondary: #8892AA;   /* Muted labels */
-  --text-accent: #4EFFC5;      /* Mint accent text */
+  /* Premium Dark Theme */
+  --bg-base: #120f18;          
+  --bg-surface: rgba(37, 30, 49, 0.4); 
+  --bg-elevated: rgba(45, 37, 61, 0.6); 
+  --border: rgba(230, 224, 242, 0.08); 
+  --border-glow: rgba(139, 92, 246, 0.3);
+  --accent-primary: #8B5CF6;   
+  --accent-secondary: #FFB2E5; 
+  --knit-color: #D0BCFF;       
+  --tuck-color: #FFD8EE;       
+  --miss-color: #F8C84A;       
+  --text-primary: #e6e0f2;     
+  --text-secondary: #b5aac8;   
+  --text-accent: #E9DDFF;      
 
-  /* Woven Specific Colors */
-  --bg-grid: #10131E;            /* Grid canvas background */
-  --border-strong: #3A4560;      /* Emphasized borders, grid lines */
-  --warp-color: #4A6FD4;         /* Warp threads — clear blue */
-  --weft-color: #C8A96E;         /* Weft threads — warm linen/gold */
-  --warp-up: #3B2FBF;            /* Warp-up cell — deep indigo */
-  --weft-up: #D4B896;            /* Weft-up cell — warm linen */
-  --accent-shaft: #7C5CBF;       /* Shaft purple — threading highlights */
-  --accent-treadle: #2EB88A;     /* Treadle teal — treadling highlights */
-  --text-mono: #A0BFFF;          /* Monospace accents — grid numbers */
-  --danger: #E05555;             /* Float length warnings */
-  --success: #3ECF8E;            /* Validation success */
+  /* Woven Specific Colors (Adjusted for Premium feel) */
+  --bg-grid: rgba(11, 9, 15, 0.7);            
+  --border-strong: rgba(230, 224, 242, 0.15);      
+  --warp-color: #8B5CF6;         
+  --weft-color: #F8C84A;         
+  --warp-up: #5C1149;            
+  --weft-up: #3E0030;            
+  --accent-shaft: #D0BCFF;       
+  --accent-treadle: #FFB2E5;     
+  --text-mono: #E9DDFF;          
+  --danger: #FFB4AB;             
+  --success: #3ECF8E;            
 
-  --font-display: 'DM Serif Display', serif;
+  /* Premium Typography */
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Comfortaa', cursive;
   --font-mono: 'JetBrains Mono', monospace;
-  --font-body: 'Sora', sans-serif;
   
   --font-woven-display: 'Playfair Display', serif;
-  --font-woven-mono: 'IBM Plex Mono', monospace;
-  --font-woven-body: 'Inter', sans-serif;
+  --font-woven-mono: 'JetBrains Mono', monospace;
+  --font-woven-body: 'Comfortaa', cursive;
 }
 
 * {
@@ -46,6 +48,11 @@
 body {
   font-family: var(--font-body);
   background-color: var(--bg-base);
+  /* Animated Mesh Gradient Background */
+  background: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
+              radial-gradient(circle at 85% 30%, rgba(255, 178, 229, 0.15), transparent 25%),
+              radial-gradient(circle at 50% 80%, rgba(248, 200, 74, 0.1), transparent 25%),
+              var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
   display: flex;
@@ -54,7 +61,8 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: normal;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 .mono {
@@ -63,18 +71,18 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-base);
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border);
+  background: rgba(230, 224, 242, 0.1);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: rgba(230, 224, 242, 0.3);
 }
 
 /* Animations */
@@ -91,20 +99,20 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes slideFadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-10px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 .slide-fade-in {
-  animation: slideFadeIn 0.3s ease forwards;
+  animation: slideFadeIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
 .pulse-cell {
-  animation: pulseScale 0.15s ease-out;
+  animation: pulseScale 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 /* UI Elements */
@@ -114,51 +122,81 @@ button {
   border: none;
   background: none;
   color: inherit;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 input, select {
   font-family: var(--font-body);
-  background: var(--bg-surface);
+  background: rgba(11, 9, 15, 0.5);
   border: 1px solid var(--border);
   color: var(--text-primary);
-  border-radius: 4px;
-  padding: 4px 8px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
 }
 
 input:focus, select:focus {
   outline: none;
   border-color: var(--accent-primary);
+  box-shadow: 0 0 12px var(--border-glow);
 }
 
 .btn-primary {
-  background: var(--accent-primary);
-  color: var(--bg-base);
+  background: linear-gradient(135deg, var(--accent-primary), #6D3BEB);
+  color: #fff;
   font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
   filter: brightness(1.1);
-  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
 }
 
 .btn-secondary {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
 }
 
 .btn-secondary:hover {
   border-color: var(--accent-secondary);
+  background: rgba(255, 178, 229, 0.05);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255, 178, 229, 0.1);
 }
 
+.btn-secondary.active {
+  border-color: var(--accent-primary);
+  background: rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+}
+
+/* Premium Glassmorphism Cards */
 .card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-top-color: rgba(255, 255, 255, 0.12);
+  border-left-color: rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card:hover {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
 }
 
 /* --- Responsive Layout Classes --- */
@@ -176,10 +214,13 @@ input:focus, select:focus {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 24px;
+  padding: 16px 32px;
   border-bottom: 1px solid var(--border);
   background: var(--bg-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   flex-shrink: 0;
+  z-index: 10;
 }
 
 /* Main Workspace */
@@ -193,7 +234,10 @@ input:focus, select:focus {
 .sidebar-left, .sidebar-right {
   overflow-y: auto;
   background: var(--bg-surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   flex-shrink: 0;
+  z-index: 5;
 }
 
 .sidebar-left {
@@ -208,6 +252,8 @@ input:focus, select:focus {
 .center-canvas {
   flex: 1;
   overflow: auto;
+  /* Allow canvas to show the body mesh gradient through */
+  background: transparent !important;
 }
 
 /* Media Queries */

@@ -192,7 +192,7 @@ function KnitApp({ onNavigateHome }) {
         </div>
 
         {/* Center Canvas */}
-        <div className="center-canvas" style={{ display: 'flex', flexDirection: 'column', background: 'var(--bg-base)', padding: '24px' }}>
+        <div className="center-canvas" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--text-secondary)' }}>
             Grid Size: {wales}W × {courses}C
           </div>

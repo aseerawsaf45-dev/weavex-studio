@@ -308,7 +308,7 @@ function WovenApp({ onNavigateHome }) {
             />
           </div>
           <div style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>
-            © 2026 WeaveX Platform
+            © Aseer Awsaf
           </div>
         </div>
 
