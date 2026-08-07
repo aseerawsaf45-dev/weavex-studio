@@ -283,6 +283,7 @@ input:focus, select:focus {
     flex-direction: column;
     gap: 16px;
     align-items: flex-start;
+    padding: 16px !important;
   }
   
   .app-header > div:last-child {
@@ -290,6 +291,38 @@ input:focus, select:focus {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column !important;
+  }
+
+  .desktop-sidebar {
+    width: 100% !important;
+    border-right: none !important;
+    border-bottom: 1px solid var(--border) !important;
+    padding: 16px !important;
+  }
+
+  .dashboard-main {
+    padding: 20px 16px !important;
+  }
+
+  .center-canvas {
+    padding: 16px !important;
+  }
+
+  .card {
+    width: 90vw !important;
+    padding: 24px !important;
+  }
+
+  /* Make grid containers horizontally scrollable without breaking mobile width */
+  .grid-container, .workspace-container {
+    max-width: 100vw;
+    overflow-x: auto;
   }
 }
 

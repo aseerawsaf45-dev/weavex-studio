@@ -72,7 +72,7 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
       </aside>
 
       {/* Main Content Area */}
-      <main style={{ flex: 1, padding: '32px 48px', overflowY: 'auto' }}>
+      <main className="dashboard-main" style={{ flex: 1, padding: '32px 48px', overflowY: 'auto' }}>
         
         {/* Header */}
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
