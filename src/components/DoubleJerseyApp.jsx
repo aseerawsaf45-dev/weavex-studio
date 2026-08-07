@@ -188,7 +188,7 @@ function DoubleJerseyApp({ onNavigateHome }) {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden', background: 'var(--bg-base)' }}>
+    <div className="app-container">
 
       {/* Header */}
       <header className="app-header">

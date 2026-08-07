@@ -181,7 +181,7 @@ function KnitApp({ onNavigateHome, activeProject }) {
   }, []);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="app-container">
       
       {/* Header */}
       <header className="app-header">
