@@ -37,6 +37,8 @@ const IntelligencePanel = ({
                 {cellType === LOOP_TYPES.KNIT && <span style={{ color: 'var(--knit-color)' }}>●</span>}
                 {cellType === LOOP_TYPES.TUCK && <span style={{ color: 'var(--tuck-color)' }}>∩</span>}
                 {cellType === LOOP_TYPES.MISS && <span style={{ color: 'var(--miss-color)' }}>─</span>}
+                {cellType === LOOP_TYPES.PURL && <span style={{ color: 'var(--purl-color, #f59e0b)' }}>≈</span>}
+                {cellType === LOOP_TYPES.TRANSFER && <span style={{ color: 'var(--transfer-color, #ec4899)' }}>➚</span>}
               </div>
             )
           })
@@ -91,6 +93,18 @@ const IntelligencePanel = ({
               <span style={{ color: 'var(--miss-color)', fontWeight: 'bold' }}>─</span> Miss
             </span>
             <span className="mono" style={{ fontSize: '14px' }}>{stats.miss} <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>({stats.missPct}%)</span></span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: 'var(--text-primary)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--purl-color, #f59e0b)', fontWeight: 'bold' }}>≈</span> Purl
+            </span>
+            <span className="mono" style={{ fontSize: '14px' }}>{stats.purl || 0} <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>({stats.purlPct || 0}%)</span></span>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span style={{ color: 'var(--text-primary)', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <span style={{ color: 'var(--transfer-color, #ec4899)', fontWeight: 'bold' }}>➚</span> Transfer
+            </span>
+            <span className="mono" style={{ fontSize: '14px' }}>{stats.transfer || 0} <span style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>({stats.transferPct || 0}%)</span></span>
           </div>
         </div>
       </div>

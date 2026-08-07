@@ -71,6 +71,10 @@ const GridEditor = ({
         return <div className={contentClass} style={{ color: 'var(--tuck-color)', fontSize: '20px', fontWeight: 'bold' }}>∩</div>;
       case LOOP_TYPES.MISS:
         return <div className={contentClass} style={{ color: 'var(--miss-color)', fontSize: '20px', fontWeight: 'bold' }}>─</div>;
+      case LOOP_TYPES.PURL:
+        return <div className={contentClass} style={{ color: 'var(--purl-color, #f59e0b)', fontSize: '20px', fontWeight: 'bold' }}>≈</div>;
+      case LOOP_TYPES.TRANSFER:
+        return <div className={contentClass} style={{ color: 'var(--transfer-color, #ec4899)', fontSize: '20px', fontWeight: 'bold' }}>➚</div>;
       default:
         return null;
     }

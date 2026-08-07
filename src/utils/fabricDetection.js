@@ -4,6 +4,8 @@ export const LOOP_TYPES = {
   KNIT: 'K',
   TUCK: 'T',
   MISS: 'M',
+  PURL: 'P',
+  TRANSFER: 'X',
 };
 
 // Next loop type in sequence for simple clicking
@@ -12,7 +14,9 @@ export const getNextLoopType = (current) => {
     case LOOP_TYPES.EMPTY: return LOOP_TYPES.KNIT;
     case LOOP_TYPES.KNIT: return LOOP_TYPES.TUCK;
     case LOOP_TYPES.TUCK: return LOOP_TYPES.MISS;
-    case LOOP_TYPES.MISS: return LOOP_TYPES.EMPTY;
+    case LOOP_TYPES.MISS: return LOOP_TYPES.PURL;
+    case LOOP_TYPES.PURL: return LOOP_TYPES.TRANSFER;
+    case LOOP_TYPES.TRANSFER: return LOOP_TYPES.EMPTY;
     default: return LOOP_TYPES.EMPTY;
   }
 };
@@ -98,6 +102,8 @@ export const detectStructureName = (grid, repeatW, repeatH) => {
     [LOOP_TYPES.KNIT]: allCells.filter(c => c === LOOP_TYPES.KNIT).length,
     [LOOP_TYPES.TUCK]: allCells.filter(c => c === LOOP_TYPES.TUCK).length,
     [LOOP_TYPES.MISS]: allCells.filter(c => c === LOOP_TYPES.MISS).length,
+    [LOOP_TYPES.PURL]: allCells.filter(c => c === LOOP_TYPES.PURL).length,
+    [LOOP_TYPES.TRANSFER]: allCells.filter(c => c === LOOP_TYPES.TRANSFER).length,
     [LOOP_TYPES.EMPTY]: allCells.filter(c => c === LOOP_TYPES.EMPTY).length,
   };
 

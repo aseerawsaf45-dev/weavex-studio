@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Image as ImageIcon } from 'lucide-react';
 import { wovenTemplates, getTemplateCategories } from './utils/wovenTemplatesData';
 
 const WovenToolbar = ({
@@ -9,11 +10,16 @@ const WovenToolbar = ({
   numTreadles, setNumTreadles,
   resizeDraft, clearDraft,
   colorSim, setColorSim,
-  loadTemplate
+  loadTemplate,
+  warpColors, setWarpColors,
+  weftColors, setWeftColors,
+  selectedColor, setSelectedColor
 }) => {
   const categories = getTemplateCategories();
   const [openCategory, setOpenCategory] = useState(categories[0]);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const PALETTE = ['#ffffff', '#000000', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
 
   const filteredTemplates = wovenTemplates.filter(t => t.name.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -66,12 +72,37 @@ const WovenToolbar = ({
           style={{ 
             width: '100%', 
             borderColor: colorSim ? 'var(--accent-primary)' : 'var(--border)',
-            color: colorSim ? 'var(--accent-primary)' : 'var(--text-primary)'
+            color: colorSim ? 'var(--accent-primary)' : 'var(--text-primary)',
+            marginBottom: colorSim ? '16px' : '0'
           }} 
           onClick={() => setColorSim(!colorSim)}
         >
           {colorSim ? 'Disable Color Sim' : 'Enable Color Sim'}
         </button>
+
+        {colorSim && (
+          <div className="slide-fade-in" style={{ marginBottom: '16px' }}>
+            <h4 style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>Select Yarn Color</h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+              {PALETTE.map(color => (
+                <div 
+                  key={color}
+                  onClick={() => setSelectedColor(color)}
+                  style={{
+                    height: '24px',
+                    backgroundColor: color,
+                    border: selectedColor === color ? '2px solid var(--accent-primary)' : '1px solid var(--border)',
+                    borderRadius: '4px',
+                    cursor: 'pointer'
+                  }}
+                />
+              ))}
+            </div>
+            <p style={{ fontSize: '10px', color: 'var(--text-secondary)', marginTop: '8px', lineHeight: '1.4' }}>
+              Click directly on the cells in the Drawdown grid, or on the column/row headers, to paint the warp and weft yarns.
+            </p>
+          </div>
+        )}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto' }}>

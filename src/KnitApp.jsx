@@ -5,15 +5,20 @@ import Toolbar from './components/Toolbar';
 import IntelligencePanel from './components/IntelligencePanel';
 import { LOOP_TYPES, detectRepeatSize, detectStructureName, extractRepeatUnit } from './utils/fabricDetection';
 import { exportToPNG, exportToJSON, exportToCSV } from './utils/exportUtils';
-import { Download, Copy } from 'lucide-react';
+import { Download, Copy, Save } from 'lucide-react';
+import { saveProject } from './utils/projectStore';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
 
-function KnitApp({ onNavigateHome }) {
-  const [wales, setWales] = useState(8);
-  const [courses, setCourses] = useState(8);
+function KnitApp({ onNavigateHome, activeProject }) {
+  const [wales, setWales] = useState(activeProject?.data?.cols || 8);
+  const [courses, setCourses] = useState(activeProject?.data?.rows || 8);
+  const [projectName, setProjectName] = useState(activeProject?.name || 'Untitled Fabric');
+  const [projectId, setProjectId] = useState(activeProject?.id || null);
   
-  const createEmptyGrid = (w, c) => Array.from({ length: c }, () => Array(w).fill(LOOP_TYPES.EMPTY));
+  const createEmptyGrid = (w, c) => Array.from({ length: c }, () => Array(w).fill(LOOP_TYPES.KNIT));
   
-  const [grid, setGrid] = useState(createEmptyGrid(wales, courses));
+  const [grid, setGrid] = useState(activeProject?.data?.grid || createEmptyGrid(wales, courses));
   
   // Tools and Selection
   const [currentTool, setCurrentTool] = useState('brush'); // brush, eraser
@@ -21,7 +26,7 @@ function KnitApp({ onNavigateHome }) {
   const [showHelp, setShowHelp] = useState(false);
   
   // History
-  const [history, setHistory] = useState([createEmptyGrid(wales, courses)]);
+  const [history, setHistory] = useState([activeProject?.data?.grid || createEmptyGrid(wales, courses)]);
   const [historyIndex, setHistoryIndex] = useState(0);
 
   // Intelligence
@@ -80,6 +85,54 @@ function KnitApp({ onNavigateHome }) {
     pushHistory(template.data);
   };
 
+  const handleSaveProject = async () => {
+    let thumbnail = '';
+    const container = document.getElementById('grid-export-container');
+    if (container) {
+      const canvas = await html2canvas(container, { backgroundColor: '#10131E' });
+      thumbnail = canvas.toDataURL('image/jpeg', 0.5);
+    }
+    
+    const saved = saveProject({
+      id: projectId,
+      name: projectName,
+      type: 'knit',
+      thumbnail,
+      data: {
+        cols: wales, rows: courses, grid
+      }
+    });
+    setProjectId(saved.id);
+    alert('Project saved!');
+  };
+
+  const exportPDF = async () => {
+    const element = document.getElementById('grid-export-container');
+    if (!element) return;
+    try {
+      const canvas = await html2canvas(element, { backgroundColor: '#10131E', scale: 2 });
+      const imgData = canvas.toDataURL('image/jpeg', 1.0);
+      const pdf = new jsPDF('l', 'mm', 'a4');
+      
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      
+      pdf.setFontSize(20);
+      pdf.text(`Tech Pack: ${projectName}`, 14, 20);
+      pdf.setFontSize(12);
+      pdf.text(`Structure: ${structureName} | Confidence: ${confidence}%`, 14, 28);
+      pdf.text(`Stats: ${stats.knitPct}% Knit | ${stats.tuckPct}% Tuck | ${stats.missPct}% Miss`, 14, 34);
+
+      const imgProps = pdf.getImageProperties(imgData);
+      const imgWidth = pdfWidth - 28;
+      const imgHeight = (imgProps.height * imgWidth) / imgProps.width;
+      
+      pdf.addImage(imgData, 'JPEG', 14, 45, imgWidth, imgHeight);
+      pdf.save(`KnitPack_${projectName.replace(/\s+/g, '_')}.pdf`);
+    } catch (err) {
+      console.error('Error exporting PDF', err);
+    }
+  };
+
   // Run intelligence algorithms on grid change
   useEffect(() => {
     // 1. Calculate Stats
@@ -88,11 +141,15 @@ function KnitApp({ onNavigateHome }) {
     const k = allCells.filter(c => c === LOOP_TYPES.KNIT).length;
     const t = allCells.filter(c => c === LOOP_TYPES.TUCK).length;
     const m = allCells.filter(c => c === LOOP_TYPES.MISS).length;
+    const p = allCells.filter(c => c === LOOP_TYPES.PURL).length;
+    const x = allCells.filter(c => c === LOOP_TYPES.TRANSFER).length;
     
     setStats({
       knit: k, knitPct: total > 0 ? Math.round((k/total)*100) : 0,
       tuck: t, tuckPct: total > 0 ? Math.round((t/total)*100) : 0,
       miss: m, missPct: total > 0 ? Math.round((m/total)*100) : 0,
+      purl: p, purlPct: total > 0 ? Math.round((p/total)*100) : 0,
+      transfer: x, transferPct: total > 0 ? Math.round((x/total)*100) : 0,
     });
 
     // 2. Detect Repeat Size
@@ -104,29 +161,7 @@ function KnitApp({ onNavigateHome }) {
     const detection = detectStructureName(grid, repeat.width, repeat.height);
     setStructureName(detection.name);
     setConfidence(detection.confidence);
-
-    // Auto-save to local storage
-    localStorage.setItem('knitcad-autosave', JSON.stringify({ wales, courses, grid }));
   }, [grid]);
-
-  // Load from local storage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem('knitcad-autosave');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (parsed.grid) {
-          setWales(parsed.wales);
-          setCourses(parsed.courses);
-          setGrid(parsed.grid);
-          setHistory([parsed.grid]);
-          setHistoryIndex(0);
-        }
-      } catch (e) {
-        console.error('Failed to load auto-save', e);
-      }
-    }
-  }, []);
 
   // Keyboard Shortcuts
   useEffect(() => {
@@ -137,6 +172,8 @@ function KnitApp({ onNavigateHome }) {
         case 'k': setCurrentLoopType(LOOP_TYPES.KNIT); break;
         case 't': setCurrentLoopType(LOOP_TYPES.TUCK); break;
         case 'm': setCurrentLoopType(LOOP_TYPES.MISS); break;
+        case 'p': setCurrentLoopType(LOOP_TYPES.PURL); break;
+        case 'x': setCurrentLoopType(LOOP_TYPES.TRANSFER); break;
       }
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -154,17 +191,28 @@ function KnitApp({ onNavigateHome }) {
               ← Home
             </button>
           )}
-          <h1 style={{ color: 'var(--accent-primary)', fontSize: '24px', margin: 0 }}>KnitCAD Pro</h1>
-          <span style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Fabric Structure Design</span>
+          <input 
+            type="text" 
+            value={projectName} 
+            onChange={e => setProjectName(e.target.value)}
+            style={{ background: 'transparent', border: 'none', color: 'var(--accent-primary)', fontSize: '20px', fontWeight: 'bold', outline: 'none', width: '200px' }} 
+            placeholder="Project Name..."
+          />
         </div>
         <div className="header-actions">
+          <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Save size={16} /> Save
+          </button>
           <button className="btn-secondary" onClick={() => exportToCSV(grid)} title="Export CSV" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Download size={16} /> CSV
           </button>
           <button className="btn-secondary" onClick={() => exportToJSON(grid, { name: structureName, repeatUnit })} title="Export JSON" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Download size={16} /> JSON
           </button>
-          <button className="btn-primary" onClick={() => exportToPNG('grid-export-container')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <button className="btn-primary" onClick={exportPDF} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Download size={16} /> Export Tech Pack
+          </button>
+          <button className="btn-secondary" onClick={() => exportToPNG('grid-export-container')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Download size={16} /> Export Image
           </button>
         </div>

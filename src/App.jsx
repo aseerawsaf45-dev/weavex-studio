@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import KnitApp from './KnitApp';
 import WovenApp from './woven/WovenApp';
-import Home from './Home';
+import Dashboard from './Dashboard';
+import DoubleJerseyApp from './components/DoubleJerseyApp';
+import LappingApp from './components/LappingApp';
+import YarnDyeApp from './components/YarnDyeApp';
 import { Lock } from 'lucide-react';
 
 function App() {
@@ -9,6 +12,7 @@ function App() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [appMode, setAppMode] = useState('home'); // 'home', 'knit', 'woven'
+  const [activeProject, setActiveProject] = useState(null);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -25,9 +29,7 @@ function App() {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg-base)' }}>
         <div className="card" style={{ padding: '48px', width: '400px', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: '12px' }}>
-          <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(91, 141, 246, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
-            <Lock size={32} color="var(--accent-primary)" />
-          </div>
+          <img src="/logo.png" alt="WeaveX Logo" style={{ width: '120px', height: 'auto', maxHeight: '120px', objectFit: 'contain', marginBottom: '24px' }} />
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '28px', color: 'var(--text-primary)', marginBottom: '8px' }}>Restricted Access</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px', textAlign: 'center' }}>Please enter the password to access the WeaveX studio.</p>
           
@@ -53,14 +55,29 @@ function App() {
   }
 
   if (appMode === 'knit') {
-    return <KnitApp onNavigateHome={() => setAppMode('home')} />;
+    return <KnitApp activeProject={activeProject} onNavigateHome={() => setAppMode('home')} />;
   }
 
   if (appMode === 'woven') {
-    return <WovenApp onNavigateHome={() => setAppMode('home')} />;
+    return <WovenApp activeProject={activeProject} onNavigateHome={() => setAppMode('home')} />;
   }
 
-  return <Home onSelectMode={setAppMode} />;
+  if (appMode === 'doublejersey') {
+    return <DoubleJerseyApp onNavigateHome={() => setAppMode('home')} />;
+  }
+
+  if (appMode === 'lapping') {
+    return <LappingApp onNavigateHome={() => setAppMode('home')} />;
+  }
+
+  if (appMode === 'yarndye') {
+    return <YarnDyeApp onNavigateHome={() => setAppMode('home')} />;
+  }
+
+  return <Dashboard onSelectMode={setAppMode} onOpenProject={(p) => {
+    setActiveProject(p);
+    setAppMode(p.type);
+  }} />;
 }
 
 export default App;

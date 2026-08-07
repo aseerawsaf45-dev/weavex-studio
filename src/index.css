@@ -5,27 +5,27 @@
   --bg-base: #120f18;          
   --bg-surface: rgba(37, 30, 49, 0.4); 
   --bg-elevated: rgba(45, 37, 61, 0.6); 
-  --border: rgba(230, 224, 242, 0.08); 
-  --border-glow: rgba(139, 92, 246, 0.3);
-  --accent-primary: #8B5CF6;   
-  --accent-secondary: #FFB2E5; 
-  --knit-color: #D0BCFF;       
-  --tuck-color: #FFD8EE;       
-  --miss-color: #F8C84A;       
-  --text-primary: #e6e0f2;     
-  --text-secondary: #b5aac8;   
-  --text-accent: #E9DDFF;      
+  --border: rgba(57, 255, 20, 0.15); 
+  --border-glow: rgba(57, 255, 20, 0.3);
+  --accent-primary: #39FF14;   
+  --accent-secondary: #00FFFF; 
+  --knit-color: #B2FFB2;       
+  --tuck-color: #00FFFF;       
+  --miss-color: #FF1493;       
+  --text-primary: #e0f2e0;     
+  --text-secondary: #aab5aa;   
+  --text-accent: #B2FFB2;      
 
   /* Woven Specific Colors (Adjusted for Premium feel) */
-  --bg-grid: rgba(11, 9, 15, 0.7);            
-  --border-strong: rgba(230, 224, 242, 0.15);      
-  --warp-color: #8B5CF6;         
-  --weft-color: #F8C84A;         
-  --warp-up: #5C1149;            
-  --weft-up: #3E0030;            
-  --accent-shaft: #D0BCFF;       
-  --accent-treadle: #FFB2E5;     
-  --text-mono: #E9DDFF;          
+  --bg-grid: rgba(9, 15, 9, 0.7);            
+  --border-strong: rgba(57, 255, 20, 0.25);      
+  --warp-color: #39FF14;         
+  --weft-color: #00FFFF;         
+  --warp-up: #1A5C11;            
+  --weft-up: #003030;            
+  --accent-shaft: #B2FFB2;       
+  --accent-treadle: #00FFFF;     
+  --text-mono: #B2FFB2;          
   --danger: #FFB4AB;             
   --success: #3ECF8E;            
 
@@ -49,9 +49,9 @@ body {
   font-family: var(--font-body);
   background-color: var(--bg-base);
   /* Animated Mesh Gradient Background */
-  background: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.15), transparent 25%),
-              radial-gradient(circle at 85% 30%, rgba(255, 178, 229, 0.15), transparent 25%),
-              radial-gradient(circle at 50% 80%, rgba(248, 200, 74, 0.1), transparent 25%),
+  background: radial-gradient(circle at 15% 50%, rgba(57, 255, 20, 0.15), transparent 25%),
+              radial-gradient(circle at 85% 30%, rgba(0, 255, 255, 0.15), transparent 25%),
+              radial-gradient(circle at 50% 80%, rgba(255, 20, 147, 0.1), transparent 25%),
               var(--bg-base);
   color: var(--text-primary);
   min-height: 100vh;
@@ -143,17 +143,17 @@ input:focus, select:focus {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent-primary), #6D3BEB);
-  color: #fff;
+  background: linear-gradient(135deg, var(--accent-primary), #00CC00);
+  color: #120f18; /* Dark text for neon background */
   font-weight: 600;
   padding: 10px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(57, 255, 20, 0.3);
 }
 
 .btn-primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.5);
+  box-shadow: 0 6px 16px rgba(57, 255, 20, 0.5);
   filter: brightness(1.1);
 }
 
@@ -171,15 +171,15 @@ input:focus, select:focus {
 
 .btn-secondary:hover {
   border-color: var(--accent-secondary);
-  background: rgba(255, 178, 229, 0.05);
+  background: rgba(0, 255, 255, 0.05);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(255, 178, 229, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 255, 255, 0.1);
 }
 
 .btn-secondary.active {
   border-color: var(--accent-primary);
-  background: rgba(139, 92, 246, 0.1);
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.2);
+  background: rgba(57, 255, 20, 0.1);
+  box-shadow: 0 0 12px rgba(57, 255, 20, 0.2);
 }
 
 /* Premium Glassmorphism Cards */
@@ -291,4 +291,29 @@ input:focus, select:focus {
     flex-wrap: wrap;
     gap: 12px;
   }
+}
+
+/* Glass Panel */
+.glass-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-top-color: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.hover-card:hover {
+  border-color: var(--accent-primary);
+  box-shadow: 0 8px 32px rgba(57, 255, 20, 0.15);
+  transform: translateY(-2px);
+}
+
+.hover-nav:hover {
+  background: rgba(57, 255, 20, 0.05) !important;
+}
+
+.hover-danger:hover {
+  color: var(--danger) !important;
 }

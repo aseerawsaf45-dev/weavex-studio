@@ -84,6 +84,28 @@ const Toolbar = ({
             <span>Miss <span style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>(M)</span></span>
             <span style={{ color: 'var(--miss-color)', fontWeight: 'bold' }}>─</span>
           </button>
+          <button 
+            className="btn-secondary"
+            style={{ 
+              borderColor: currentLoopType === LOOP_TYPES.PURL ? 'var(--accent-primary)' : 'var(--border)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}
+            onClick={() => setCurrentLoopType(LOOP_TYPES.PURL)}
+          >
+            <span>Purl <span style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>(P)</span></span>
+            <span style={{ color: 'var(--purl-color, #f59e0b)', fontWeight: 'bold' }}>≈</span>
+          </button>
+          <button 
+            className="btn-secondary"
+            style={{ 
+              borderColor: currentLoopType === LOOP_TYPES.TRANSFER ? 'var(--accent-primary)' : 'var(--border)',
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+            }}
+            onClick={() => setCurrentLoopType(LOOP_TYPES.TRANSFER)}
+          >
+            <span>Transfer <span style={{ color: 'var(--text-secondary)', fontSize: '10px' }}>(X)</span></span>
+            <span style={{ color: 'var(--transfer-color, #ec4899)', fontWeight: 'bold' }}>➚</span>
+          </button>
         </div>
       </div>
 
