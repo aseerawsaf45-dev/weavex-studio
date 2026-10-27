@@ -243,20 +243,20 @@ function KnitApp({ onNavigateHome, activeProject }) {
               title="Preset Zoom 178% (Optimized for Larger Screens)"
             >178%</button>
           </div>
-          <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Save size={16} /> Save
+          <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <Save size={14} /> Save
           </button>
-          <button className="btn-secondary" onClick={() => exportToCSV(grid)} title="Export CSV" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Download size={16} /> CSV
+          <button className="btn-secondary" onClick={() => exportToCSV(grid)} title="Export CSV" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <Download size={14} /> CSV
           </button>
-          <button className="btn-secondary" onClick={() => exportToJSON(grid, { name: structureName, repeatUnit })} title="Export JSON" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Download size={16} /> JSON
+          <button className="btn-secondary" onClick={() => exportToJSON(grid, { name: structureName, repeatUnit })} title="Export JSON" style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <Download size={14} /> JSON
           </button>
-          <button className="btn-primary" onClick={exportPDF} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Download size={16} /> Export Tech Pack
+          <button className="btn-secondary" onClick={() => exportToPNG('grid-export-container')} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <Download size={14} /> PNG
           </button>
-          <button className="btn-secondary" onClick={() => exportToPNG('grid-export-container')} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Download size={16} /> Export Image
+          <button className="btn-primary" onClick={exportPDF} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+            <Download size={14} /> Tech Pack
           </button>
         </div>
       </header>

@@ -234,16 +234,16 @@ function WovenApp({ onNavigateHome, activeProject }) {
               title="Preset Zoom 178% (Optimized for Larger Screens)"
             >178%</button>
           </div>
-          <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+          <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Save size={14} /> Save
           </button>
-          <button className="btn-secondary" onClick={handleExportPDF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+          <button className="btn-secondary" onClick={handleExportPDF} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Download size={14} /> Tech Pack
           </button>
-          <button className="btn-secondary" onClick={handleExportPNG} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+          <button className="btn-secondary" onClick={handleExportPNG} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <ImageIcon size={14} /> PNG
           </button>
-          <button className="btn-primary" onClick={handleExportWIF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
+          <button className="btn-primary" onClick={handleExportWIF} style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Download size={14} /> WIF
           </button>
         </div>
