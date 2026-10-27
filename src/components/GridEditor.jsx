@@ -9,7 +9,8 @@ const GridEditor = ({
   wales,
   courses,
   repeatUnit,
-  onHistoryChange
+  onHistoryChange,
+  cellSize = 48
 }) => {
   const containerRef = useRef(null);
   const lastActionRef = useRef({ r: -1, c: -1, time: 0 });
@@ -64,17 +65,18 @@ const GridEditor = ({
 
   const renderCellContent = (type) => {
     const contentClass = type !== LOOP_TYPES.EMPTY ? 'pulse-cell' : '';
+    const symbolSize = Math.round(cellSize * 0.52) + 'px';
     switch (type) {
       case LOOP_TYPES.KNIT:
-        return <div className={contentClass} style={{ color: 'var(--knit-color)', fontSize: '20px' }}>●</div>;
+        return <div className={contentClass} style={{ color: 'var(--knit-color)', fontSize: symbolSize }}>●</div>;
       case LOOP_TYPES.TUCK:
-        return <div className={contentClass} style={{ color: 'var(--tuck-color)', fontSize: '20px', fontWeight: 'bold' }}>∩</div>;
+        return <div className={contentClass} style={{ color: 'var(--tuck-color)', fontSize: symbolSize, fontWeight: 'bold' }}>∩</div>;
       case LOOP_TYPES.MISS:
-        return <div className={contentClass} style={{ color: 'var(--miss-color)', fontSize: '20px', fontWeight: 'bold' }}>─</div>;
+        return <div className={contentClass} style={{ color: 'var(--miss-color)', fontSize: symbolSize, fontWeight: 'bold' }}>─</div>;
       case LOOP_TYPES.PURL:
-        return <div className={contentClass} style={{ color: 'var(--purl-color, #f59e0b)', fontSize: '20px', fontWeight: 'bold' }}>≈</div>;
+        return <div className={contentClass} style={{ color: 'var(--purl-color, #f59e0b)', fontSize: symbolSize, fontWeight: 'bold' }}>≈</div>;
       case LOOP_TYPES.TRANSFER:
-        return <div className={contentClass} style={{ color: 'var(--transfer-color, #ec4899)', fontSize: '20px', fontWeight: 'bold' }}>➚</div>;
+        return <div className={contentClass} style={{ color: 'var(--transfer-color, #ec4899)', fontSize: symbolSize, fontWeight: 'bold' }}>➚</div>;
       default:
         return null;
     }
@@ -109,8 +111,8 @@ const GridEditor = ({
         id="grid-export-container"
         style={{
           display: 'grid',
-          gridTemplateColumns: `40px repeat(${wales}, 40px)`,
-          gridTemplateRows: `40px repeat(${courses}, 40px)`,
+          gridTemplateColumns: `${cellSize}px repeat(${wales}, ${cellSize}px)`,
+          gridTemplateRows: `${cellSize}px repeat(${courses}, ${cellSize}px)`,
           gap: '1px',
           backgroundColor: 'var(--border)', // Creates grid lines
           border: '1px solid var(--border)',
@@ -141,6 +143,8 @@ const GridEditor = ({
               return (
                 <div
                   key={`cell-${r}-${c}`}
+                  role="button"
+                  tabIndex={0}
                   style={{
                     backgroundColor: 'var(--bg-base)',
                     display: 'flex',
@@ -148,13 +152,15 @@ const GridEditor = ({
                     justifyContent: 'center',
                     cursor: currentTool === 'eraser' ? 'cell' : 'pointer',
                     userSelect: 'none',
-                    touchAction: 'none',
+                    touchAction: 'manipulation',
+                    WebkitTapHighlightColor: 'transparent',
                     position: 'relative',
                     transition: 'background 0.1s, transform 0.05s',
                     ...getCellBorderStyles(r, c)
                   }}
                   onMouseDown={(e) => onMouseDown(e, r, c)}
                   onMouseEnter={(e) => onMouseEnter(e, r, c)}
+                  onTouchStart={() => handleCellAction(r, c)}
                   className="grid-cell"
                 >
                   {renderCellContent(cellType)}

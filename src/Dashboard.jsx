@@ -3,9 +3,15 @@ import { Plus, FileText, Clock, HardDrive, ExternalLink, Settings, Home, FolderO
 import { getProjects, deleteProject } from './utils/projectStore';
 import Calculations from './components/Calculations';
 
-const Dashboard = ({ onSelectMode, onOpenProject }) => {
+const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) => {
   const [projects, setProjects] = useState([]);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState(initialTab);
+
+  useEffect(() => {
+    if (initialTab) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab]);
 
   useEffect(() => {
     setProjects(getProjects());
@@ -58,16 +64,32 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
 
           <button onClick={() => setActiveTab('calculations')} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 12px', borderRadius: '8px', background: activeTab === 'calculations' ? 'rgba(57, 255, 20, 0.1)' : 'transparent', color: activeTab === 'calculations' ? 'var(--accent-primary)' : 'var(--text-secondary)', transition: 'background 0.2s', width: '100%', textAlign: 'left', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }} className="hover-nav">
             <Calculator size={18} />
-            <span style={{ fontWeight: '500' }}>Calculations</span>
+            <span style={{ fontWeight: '500' }}>Yield Engine</span>
           </button>
         </nav>
 
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>A</div>
-          <div>
-            <div style={{ fontWeight: '500', fontSize: '14px' }}>Aseer Awsaf</div>
-            <div style={{ color: 'var(--accent-primary)', fontSize: '12px' }}>Pro Plan</div>
-          </div>
+        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+          <button 
+            onClick={() => onSelectMode('landing')} 
+            className="hover-nav"
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '10px', 
+              width: '100%', 
+              padding: '10px 12px', 
+              borderRadius: '8px', 
+              background: 'rgba(57, 255, 20, 0.08)', 
+              border: '1px solid rgba(57, 255, 20, 0.2)', 
+              color: 'var(--accent-primary)',
+              fontSize: '13px',
+              fontWeight: '500',
+              cursor: 'pointer'
+            }}
+          >
+            <ExternalLink size={16} />
+            <span>Studio Showcase</span>
+          </button>
         </div>
       </aside>
 
@@ -75,13 +97,34 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
       <main className="dashboard-main" style={{ flex: 1, padding: '32px 48px', overflowY: 'auto' }}>
         
         {/* Header */}
-        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '40px' }}>
+        <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '36px', flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '4px' }}>Welcome back,</p>
-            <h2 style={{ fontSize: '32px', fontWeight: 'bold', fontFamily: 'var(--font-display)', background: 'linear-gradient(to right, #ffffff, #39FF14)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Aseer
+            <h2 style={{ fontSize: '28px', fontWeight: 'bold', fontFamily: 'var(--font-display)', color: 'var(--text-primary)', letterSpacing: '-0.02em' }}>
+              {activeTab === 'calculations' ? 'Yield Engine & Predictions' : 'Textile Design Workspace'}
             </h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginTop: '4px' }}>
+              {activeTab === 'calculations' ? 'Universal yarn crimp calculation, fabric GSM prediction, weight estimation, and manufacturing cost formula' : 'Select a specialized design module or continue drafting structure matrices'}
+            </p>
           </div>
+          <button 
+            onClick={() => onSelectMode('landing')}
+            className="hover-card"
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              padding: '10px 18px',
+              borderRadius: '10px',
+              background: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid var(--border)',
+              color: 'var(--text-primary)',
+              fontSize: '13px',
+              cursor: 'pointer'
+            }}
+          >
+            <ExternalLink size={14} color="var(--accent-primary)" />
+            <span>View Landing Showcase</span>
+          </button>
         </header>
 
 
@@ -104,7 +147,7 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
                 <Plus size={24} color="var(--accent-treadle)" />
               </div>
               <div>
-                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>New KnitCAD</div>
+                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>New KnitStudio</div>
                 <div style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Start a grid-based knit pattern</div>
               </div>
             </div>
@@ -128,6 +171,16 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
                 <div style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Warp knitting guide bar lapping</div>
               </div>
             </div>
+
+            <div onClick={() => setActiveTab('calculations')} className="glass-panel hover-card" style={{ padding: '24px', borderRadius: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '12px', background: 'rgba(52, 211, 153, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Calculator size={24} color="#34d399" />
+              </div>
+              <div>
+                <div style={{ fontWeight: 'bold', fontSize: '16px' }}>Yield Engine</div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Yarn crimp, GSM & cost analysis</div>
+              </div>
+            </div>
           </div>
         </section>)}
 
@@ -148,7 +201,7 @@ const Dashboard = ({ onSelectMode, onOpenProject }) => {
                 <div style={{ padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <div style={{ fontWeight: 'bold', fontSize: '16px', marginBottom: '4px' }}>{p.name || 'Untitled'}</div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{p.type === 'woven' ? 'WeaveDraft' : 'KnitCAD Pro'} • {new Date(p.lastEdited).toLocaleDateString()}</div>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>{p.type === 'woven' ? 'WeaveDraft' : 'Knit Studio Pro'} • {new Date(p.lastEdited).toLocaleDateString()}</div>
                   </div>
                   <div style={{ display: 'flex', gap: '8px' }}>
                     <button onClick={(e) => handleDelete(e, p.id)} className="icon-btn hover-danger" style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>

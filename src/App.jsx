@@ -5,6 +5,7 @@ import Dashboard from './Dashboard';
 import DoubleJerseyApp from './components/DoubleJerseyApp';
 import LappingApp from './components/LappingApp';
 import YarnDyeApp from './components/YarnDyeApp';
+import LandingPage from './LandingPage';
 import { Lock } from 'lucide-react';
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [appMode, setAppMode] = useState('home'); // 'home', 'knit', 'woven'
+  const [appMode, setAppMode] = useState('landing'); // 'landing', 'dashboard', 'home', 'knit', 'woven', 'doublejersey', 'lapping', 'yarndye', 'calculations'
   const [activeProject, setActiveProject] = useState(null);
 
   const handleLogin = (e) => {
@@ -55,30 +56,51 @@ function App() {
     );
   }
 
+  if (appMode === 'landing') {
+    return (
+      <LandingPage 
+        onLaunchStudio={() => setAppMode('dashboard')} 
+        onSelectTool={(tool) => {
+          if (tool === 'calculations') {
+            setAppMode('calculations');
+          } else {
+            setAppMode(tool);
+          }
+        }} 
+      />
+    );
+  }
+
   if (appMode === 'knit') {
-    return <KnitApp activeProject={activeProject} onNavigateHome={() => setAppMode('home')} />;
+    return <KnitApp activeProject={activeProject} onNavigateHome={() => setAppMode('dashboard')} />;
   }
 
   if (appMode === 'woven') {
-    return <WovenApp activeProject={activeProject} onNavigateHome={() => setAppMode('home')} />;
+    return <WovenApp activeProject={activeProject} onNavigateHome={() => setAppMode('dashboard')} />;
   }
 
   if (appMode === 'doublejersey') {
-    return <DoubleJerseyApp onNavigateHome={() => setAppMode('home')} />;
+    return <DoubleJerseyApp onNavigateHome={() => setAppMode('dashboard')} />;
   }
 
   if (appMode === 'lapping') {
-    return <LappingApp onNavigateHome={() => setAppMode('home')} />;
+    return <LappingApp onNavigateHome={() => setAppMode('dashboard')} />;
   }
 
   if (appMode === 'yarndye') {
-    return <YarnDyeApp onNavigateHome={() => setAppMode('home')} />;
+    return <YarnDyeApp onNavigateHome={() => setAppMode('dashboard')} />;
   }
 
-  return <Dashboard onSelectMode={setAppMode} onOpenProject={(p) => {
-    setActiveProject(p);
-    setAppMode(p.type);
-  }} />;
+  return (
+    <Dashboard 
+      initialTab={appMode === 'calculations' ? 'calculations' : 'dashboard'}
+      onSelectMode={setAppMode} 
+      onOpenProject={(p) => {
+        setActiveProject(p);
+        setAppMode(p.type);
+      }} 
+    />
+  );
 }
 
 export default App;

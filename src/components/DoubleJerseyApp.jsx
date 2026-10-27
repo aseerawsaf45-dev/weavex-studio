@@ -157,16 +157,18 @@ function DoubleJerseyApp({ onNavigateHome }) {
       {/* Column headers */}
       <div style={{ display: 'flex', gap: '1px', marginBottom: '2px', paddingLeft: '28px' }}>
         {Array.from({ length: wales }).map((_, c) => (
-          <div key={c} style={{ width: 36, textAlign: 'center', fontSize: '9px', color: 'var(--text-secondary)' }}>{c + 1}</div>
+          <div key={c} style={{ width: 36, textAlign: 'center', fontSize: '9px', color: 'var(--text-secondary)', flexShrink: 0 }}>{c + 1}</div>
         ))}
       </div>
       {grid.map((row, r) => (
         <div key={r} style={{ display: 'flex', alignItems: 'center', gap: '1px', marginBottom: '1px' }}>
-          <div style={{ width: 26, fontSize: '9px', color: 'var(--text-secondary)', textAlign: 'right', paddingRight: '4px' }}>C{courses - r}</div>
+          <div style={{ width: 26, fontSize: '9px', color: 'var(--text-secondary)', textAlign: 'right', paddingRight: '4px', flexShrink: 0 }}>C{courses - r}</div>
           {row.map((cell, c) => (
             <div
               key={c}
               onClick={() => toggleCell(bedName, r, c)}
+              role="button"
+              tabIndex={0}
               style={{
                 width: 36, height: 36,
                 border: `1px solid ${cell !== STITCH.EMPTY ? STITCH_COLORS[cell] : 'var(--border-strong)'}`,
@@ -176,7 +178,10 @@ function DoubleJerseyApp({ onNavigateHome }) {
                 fontSize: '14px', fontWeight: 'bold', fontFamily: 'var(--font-mono)',
                 color: cell !== STITCH.EMPTY ? STITCH_COLORS[cell] : 'var(--border)',
                 transition: 'all 0.15s ease',
-                borderRadius: '4px'
+                borderRadius: '4px',
+                flexShrink: 0,
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'transparent'
               }}
             >
               {STITCH_LABELS[cell]}
@@ -289,10 +294,14 @@ function DoubleJerseyApp({ onNavigateHome }) {
         </div>
 
         {/* Center Canvas */}
-        <div className="center-canvas" style={{ padding: '32px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', gap: '48px', background: 'var(--bg-grid)' }}>
-          {renderGrid(frontBed, 'front')}
-          <div style={{ width: '2px', background: 'var(--border)', alignSelf: 'stretch', borderRadius: '1px' }} />
-          {renderGrid(backBed, 'back')}
+        <div className="center-canvas double-jersey-canvas" style={{ padding: '24px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', flexWrap: 'wrap', gap: '24px', background: 'var(--bg-grid)' }}>
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', maxWidth: '100%' }}>
+            {renderGrid(frontBed, 'front')}
+          </div>
+          <div className="dj-divider" style={{ width: '2px', background: 'var(--border)', alignSelf: 'stretch', borderRadius: '1px' }} />
+          <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', maxWidth: '100%' }}>
+            {renderGrid(backBed, 'back')}
+          </div>
         </div>
       </div>
     </div>

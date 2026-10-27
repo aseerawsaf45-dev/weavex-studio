@@ -6,7 +6,7 @@ import { detectRepeatSize, analyzeFloats, detectWeaveStructure } from './utils/w
 import { exportWIF } from './utils/weaveExport';
 import { wovenTemplates } from './utils/wovenTemplatesData';
 import { saveProject } from '../utils/projectStore';
-import { Download, Image as ImageIcon, Save } from 'lucide-react';
+import { Download, Image as ImageIcon, Save, Grid, Sliders, Sparkles } from 'lucide-react';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { DraftingGrid, TieupGrid, TreadlingGrid, WeavingGrid } from './WovenGrids';
@@ -24,6 +24,13 @@ function WovenApp({ onNavigateHome, activeProject }) {
   const [numTreadles, setNumTreadles] = useState(initialTemplate.numTreadles);
   const [showHelp, setShowHelp] = useState(false);
   const [colorSim, setColorSim] = useState(false);
+  const [mobileTab, setMobileTab] = useState('grid'); // 'grid', 'controls', 'intelligence'
+  const [cellSize, setCellSize] = useState(() => {
+    if (typeof window === 'undefined') return 36;
+    if (window.innerWidth >= 1024) return 64; // 178% for large screen
+    if (window.innerWidth < 640) return 26;   // Mobile fit
+    return 36;
+  });
 
   // Standard 4-part editable grids
   const [threading, setThreading] = useState(activeProject?.data?.threading || createEmptyGrid(initialTemplate.numShafts, initialTemplate.warpEnds));
@@ -190,27 +197,88 @@ function WovenApp({ onNavigateHome, activeProject }) {
             placeholder="Project Name..."
           />
         </div>
-        <div className="header-actions" style={{ display: 'flex', gap: '8px' }}>
+        <div className="header-actions">
+          <div className="zoom-control-bar" style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Zoom:</span>
+            <button 
+              onClick={() => setCellSize(prev => Math.max(18, prev - 4))} 
+              className="btn-secondary" 
+              style={{ padding: '2px 8px', fontSize: '13px', lineHeight: 1 }}
+              title="Zoom Out"
+            >-</button>
+            <span style={{ fontSize: '11px', minWidth: '40px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: '600', color: cellSize === 64 ? 'var(--accent-primary)' : 'inherit' }}>
+              {Math.round((cellSize / 36) * 100)}%
+            </span>
+            <button 
+              onClick={() => setCellSize(prev => Math.min(96, prev + 4))} 
+              className="btn-secondary" 
+              style={{ padding: '2px 8px', fontSize: '13px', lineHeight: 1 }}
+              title="Zoom In"
+            >+</button>
+            <button 
+              onClick={() => setCellSize(26)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 6px', fontSize: '10px', fontWeight: cellSize === 26 ? 'bold' : 'normal', color: cellSize === 26 ? 'var(--accent-primary)' : 'inherit', background: cellSize === 26 ? 'rgba(57, 255, 20, 0.12)' : undefined }}
+              title="Fit to Mobile Screen (26px)"
+            >Fit</button>
+            <button 
+              onClick={() => setCellSize(36)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 6px', fontSize: '10px', opacity: 0.8 }}
+              title="Reset to 100% (36px)"
+            >100%</button>
+            <button 
+              onClick={() => setCellSize(64)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 7px', fontSize: '10px', fontWeight: cellSize === 64 ? 'bold' : 'normal', color: cellSize === 64 ? 'var(--accent-primary)' : 'inherit', background: cellSize === 64 ? 'rgba(57, 255, 20, 0.12)' : undefined }}
+              title="Preset Zoom 178% (Optimized for Larger Screens)"
+            >178%</button>
+          </div>
           <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
             <Save size={14} /> Save
           </button>
           <button className="btn-secondary" onClick={handleExportPDF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-            <Download size={14} /> Export Tech Pack
+            <Download size={14} /> Tech Pack
           </button>
           <button className="btn-secondary" onClick={handleExportPNG} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-            <ImageIcon size={14} /> Export PNG
+            <ImageIcon size={14} /> PNG
           </button>
           <button className="btn-primary" onClick={handleExportWIF} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px' }}>
-            <Download size={14} /> Export WIF
+            <Download size={14} /> WIF
           </button>
         </div>
       </header>
+
+      {/* Mobile Screen Tab Navigation */}
+      <div className="woven-mobile-tabs">
+        <button 
+          onClick={() => setMobileTab('grid')} 
+          className={`woven-mob-tab ${mobileTab === 'grid' ? 'active' : ''}`}
+        >
+          <Grid size={15} />
+          <span>4-Part Grids</span>
+        </button>
+        <button 
+          onClick={() => setMobileTab('controls')} 
+          className={`woven-mob-tab ${mobileTab === 'controls' ? 'active' : ''}`}
+        >
+          <Sliders size={15} />
+          <span>Yarn & Parameters</span>
+        </button>
+        <button 
+          onClick={() => setMobileTab('intelligence')} 
+          className={`woven-mob-tab ${mobileTab === 'intelligence' ? 'active' : ''}`}
+        >
+          <Sparkles size={15} />
+          <span>Analysis & Yield</span>
+        </button>
+      </div>
 
       {/* Main Workspace */}
       <div className="workspace-container woven-app">
 
         {/* Left Sidebar */}
-        <div className="sidebar-left" style={{ width: '260px', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className={`sidebar-left ${mobileTab !== 'controls' ? 'woven-mob-hidden' : ''}`} style={{ width: '260px', padding: '16px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
           <div>
             <WovenToolbar
               mode="direct"
@@ -227,23 +295,24 @@ function WovenApp({ onNavigateHome, activeProject }) {
             />
           </div>
           <div style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>
-            © Aseer Awsaf
+            © Developed by Aseer Awsaf
           </div>
         </div>
 
         {/* Center: 3-Panel Editor (L-Shape Layout) */}
-        <div id="woven-export-area" className="center-canvas" style={{
-          padding: '32px',
-          display: 'flex', justifyContent: 'center', alignItems: 'flex-start',
-          background: 'var(--bg-grid)'
-        }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto auto', gridTemplateRows: 'auto auto', gap: '32px' }}>
+        <div id="woven-export-area" className={`center-canvas ${mobileTab !== 'grid' ? 'woven-mob-hidden' : ''}`} style={{ background: 'var(--bg-grid)' }}>
+          <div className="mobile-canvas-banner">
+            <span>↔ Tap cells to toggle interlacement • Pinch or use Zoom presets (Fit / 100% / 178%)</span>
+          </div>
+
+          <div className="woven-grid-layout">
             
             {/* Top Left: Drafting Plan */}
             <div>
               <DraftingGrid
                 threading={threading} setThreading={setThreading}
                 numShafts={numShafts} warpEnds={warpEnds}
+                size={cellSize}
               />
             </div>
             
@@ -252,6 +321,7 @@ function WovenApp({ onNavigateHome, activeProject }) {
               <TieupGrid
                 tieup={tieup} setTieup={setTieup}
                 numShafts={numShafts} numTreadles={numTreadles}
+                size={cellSize}
               />
             </div>
 
@@ -264,6 +334,7 @@ function WovenApp({ onNavigateHome, activeProject }) {
                 warpColors={warpColors} setWarpColors={setWarpColors}
                 weftColors={weftColors} setWeftColors={setWeftColors}
                 selectedColor={selectedColor}
+                size={cellSize}
               />
             </div>
 
@@ -272,6 +343,7 @@ function WovenApp({ onNavigateHome, activeProject }) {
               <TreadlingGrid
                 treadling={treadling} setTreadling={setTreadling}
                 weftPicks={weftPicks} numTreadles={numTreadles}
+                size={cellSize}
               />
             </div>
 
@@ -279,7 +351,7 @@ function WovenApp({ onNavigateHome, activeProject }) {
         </div>
 
         {/* Right Sidebar: Intelligence */}
-        <div className="sidebar-right" style={{ width: '240px', padding: '16px' }}>
+        <div className={`sidebar-right ${mobileTab !== 'intelligence' ? 'woven-mob-hidden' : ''}`} style={{ width: '240px', padding: '16px' }}>
           <WovenIntelligence
             structureName={structureName}
             confidence={confidence}

@@ -46,7 +46,7 @@ const KnitHelpModal = ({ onClose }) => {
         <button onClick={onClose} style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: '20px' }}>✕</button>
 
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '32px', color: 'var(--accent-primary)', marginBottom: '8px' }}>
-          How to Design in KnitCAD Pro
+          How to Design in Knit Studio Pro
         </h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', fontSize: '16px' }}>
           A visual guide to weft-knitting structures. Paint loops onto the grid to create fabrics.

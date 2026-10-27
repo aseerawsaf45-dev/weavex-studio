@@ -276,9 +276,11 @@ function LappingApp({ onNavigateHome }) {
         </div>
 
         {/* Center Canvas */}
-        <div className="center-canvas" style={{ padding: '32px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', background: 'var(--bg-grid)' }}>
-          <div className="glass-panel" style={{ padding: '24px', borderRadius: '16px', display: 'inline-block' }}>
-            {renderDiagram()}
+        <div className="center-canvas" style={{ padding: '16px', display: 'block', overflowX: 'auto', WebkitOverflowScrolling: 'touch', background: 'var(--bg-grid)' }}>
+          <div style={{ minWidth: 'min-content', display: 'flex', justifyContent: 'center' }}>
+            <div className="glass-panel" style={{ padding: '16px', borderRadius: '16px', display: 'inline-block' }}>
+              {renderDiagram()}
+            </div>
           </div>
         </div>
       </div>

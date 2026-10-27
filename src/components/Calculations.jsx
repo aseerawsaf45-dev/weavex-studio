@@ -103,7 +103,7 @@ const Calculations = () => {
 
       {/* ═══════════════ WOVEN SECTION ═══════════════ */}
       {mode === 'woven' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+        <div className="calculations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
 
           {/* Input Panel */}
           <div className="glass-panel" style={{ padding: '28px', borderRadius: '16px' }}>
@@ -199,7 +199,7 @@ const Calculations = () => {
 
       {/* ═══════════════ KNIT SECTION ═══════════════ */}
       {mode === 'knit' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px' }}>
+        <div className="calculations-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '24px' }}>
 
           {/* Input Panel */}
           <div className="glass-panel" style={{ padding: '28px', borderRadius: '16px' }}>

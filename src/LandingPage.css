@@ -1,0 +1,1120 @@
+/* WeaveX Studio - Luxury Industrial Editorial Theme */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --lux-bg: #090a0d;
+  --lux-surface: #101319;
+  --lux-surface-elevated: #161a22;
+  --lux-surface-subtle: #1c212c;
+  --lux-border: rgba(255, 255, 255, 0.08);
+  --lux-border-focus: rgba(16, 185, 129, 0.4);
+  --lux-emerald: #10b981;
+  --lux-emerald-subtle: rgba(16, 185, 129, 0.12);
+  --lux-text-primary: #f8fafc;
+  --lux-text-secondary: #94a3b8;
+  --lux-text-muted: #64748b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.lux-container {
+  background-color: var(--lux-bg);
+  color: var(--lux-text-primary);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  overflow-x: hidden;
+  width: 100%;
+  min-height: 100dvh;
+  position: relative;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+.lux-mono {
+  font-family: 'JetBrains Mono', monospace !important;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Background Atmosphere */
+.lux-canvas-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.lux-canvas-grid {
+  position: absolute;
+  inset: 0;
+  opacity: 0.035;
+  background-image: 
+    linear-gradient(to right, #94a3b8 1px, transparent 1px),
+    linear-gradient(to bottom, #94a3b8 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.lux-canvas-glow {
+  position: absolute;
+  top: -100px;
+  right: 15%;
+  width: 700px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(16, 185, 129, 0.07) 0%, transparent 65%);
+  filter: blur(80px);
+  pointer-events: none;
+}
+
+.lux-canvas-glow-secondary {
+  position: absolute;
+  bottom: 20%;
+  left: 5%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.04) 0%, transparent 65%);
+  filter: blur(100px);
+  pointer-events: none;
+}
+
+/* Integrated Header (Non-floating, calm, built-in) */
+.lux-top-header {
+  position: relative;
+  z-index: 50;
+  width: 100%;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--lux-border);
+}
+
+.lux-logo-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+.lux-logo-img {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+
+.lux-brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.lux-version-tag {
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: var(--lux-emerald-subtle);
+  color: var(--lux-emerald);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  font-weight: 600;
+}
+
+.lux-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+}
+
+.lux-nav-link {
+  color: var(--lux-text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.lux-nav-link:hover {
+  color: #ffffff;
+}
+
+.lux-btn-launch-header {
+  background: #ffffff;
+  color: #090a0d !important;
+  font-weight: 700;
+  font-size: 13px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+
+.lux-btn-launch-header:hover {
+  background: #e2e8f0;
+  transform: translateY(-1px);
+}
+
+.lux-btn-launch-header:active {
+  transform: scale(0.98);
+}
+
+/* Hero Section */
+.lux-hero {
+  position: relative;
+  z-index: 10;
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: 80px 48px 100px;
+  min-height: 85dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.lux-hero-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 64px;
+  align-items: center;
+}
+
+.lux-hero-h1 {
+  font-size: clamp(3rem, 5vw, 4.8rem) !important;
+  font-weight: 800 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.04em !important;
+  color: #ffffff !important;
+  margin: 0 0 24px 0 !important;
+  text-wrap: balance;
+}
+
+.lux-gradient-text {
+  background: linear-gradient(135deg, #ffffff 40%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lux-hero-lead {
+  font-size: 19px;
+  color: var(--lux-text-secondary);
+  line-height: 1.65;
+  max-width: 620px;
+  margin-bottom: 36px;
+  font-weight: 400;
+  text-wrap: pretty;
+}
+
+.lux-hero-btn-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.lux-btn-primary {
+  background: var(--lux-emerald);
+  color: #042217 !important;
+  font-weight: 700;
+  font-size: 15px;
+  padding: 15px 32px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.25);
+}
+
+.lux-btn-primary:hover {
+  background: #34d399;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(16, 185, 129, 0.35);
+}
+
+.lux-btn-primary:active {
+  transform: scale(0.98);
+}
+
+.lux-btn-secondary {
+  background: var(--lux-surface);
+  border: 1px solid var(--lux-border);
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 15px 26px;
+  border-radius: 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+}
+
+.lux-btn-secondary:hover {
+  background: var(--lux-surface-elevated);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.lux-btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Structure Workstation Card - Scaled for High-Impact Big Screens */
+.lux-workstation {
+  width: 100%;
+  max-width: 760px;
+  background: var(--lux-surface);
+  border: 1px solid var(--lux-border);
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.lux-ws-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 18px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--lux-border);
+}
+
+.lux-ws-chips {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.lux-chip {
+  background: var(--lux-surface-elevated);
+  border: 1px solid var(--lux-border);
+  color: var(--lux-text-secondary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lux-chip.active {
+  background: var(--lux-emerald-subtle);
+  border-color: var(--lux-emerald);
+  color: var(--lux-emerald);
+  font-weight: 600;
+}
+
+.lux-chip:hover:not(.active) {
+  background: var(--lux-surface-subtle);
+  color: #ffffff;
+}
+
+.lux-loom-matrix {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 10px;
+  padding: 20px;
+  border-radius: 14px;
+  background: #090a0d;
+  border: 1px solid var(--lux-border);
+}
+
+.lux-loom-cell {
+  height: 64px;
+  border-radius: 8px;
+  border: 1px solid;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  transition: all 0.15s ease;
+}
+
+.lux-loom-cell:hover {
+  transform: scale(1.08);
+  z-index: 2;
+}
+
+.lux-ws-footer {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--lux-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--lux-text-secondary);
+}
+
+/* Metric Strip / Marquee */
+.lux-marquee-strip {
+  position: relative;
+  z-index: 10;
+  padding: 18px 0;
+  border-top: 1px solid var(--lux-border);
+  border-bottom: 1px solid var(--lux-border);
+  background: #0b0d11;
+  overflow: hidden;
+}
+
+.lux-marquee-track {
+  display: flex;
+  width: 200%;
+  animation: marqueeScroll 26s linear infinite;
+}
+
+.lux-marquee-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 50%;
+  min-width: max-content;
+  gap: 56px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: var(--lux-text-muted);
+  text-transform: uppercase;
+}
+
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Narrative Quote */
+.lux-narrative {
+  position: relative;
+  z-index: 10;
+  padding: 110px 32px;
+  max-width: 1060px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.lux-narrative-label {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 4px;
+  background: var(--lux-emerald-subtle);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: var(--lux-emerald);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 24px;
+}
+
+.lux-narrative-quote {
+  font-size: clamp(1.8rem, 3.4vw, 3rem) !important;
+  font-weight: 600 !important;
+  line-height: 1.35 !important;
+  letter-spacing: -0.02em !important;
+  color: #ffffff !important;
+}
+
+.lux-scrub-word {
+  display: inline-block;
+  margin-right: 9px;
+  transition: opacity 0.2s ease;
+}
+
+/* Bento 2.0 Architectural Suite */
+.lux-bento-section {
+  position: relative;
+  z-index: 10;
+  padding: 100px 48px;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+.lux-bento-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 48px;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.lux-bento-title {
+  font-size: clamp(2rem, 3.6vw, 3.2rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  line-height: 1.15;
+}
+
+.lux-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+}
+
+.lux-bento-card {
+  background: var(--lux-surface);
+  border: 1px solid var(--lux-border);
+  border-radius: 16px;
+  padding: 32px;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.lux-bento-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--lux-border-focus);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5), 0 0 24px rgba(16, 185, 129, 0.08);
+}
+
+.lux-bento-8 {
+  grid-column: span 8;
+  min-height: 380px;
+}
+
+.lux-bento-4 {
+  grid-column: span 4;
+  min-height: 380px;
+}
+
+.lux-bento-sm-4 {
+  grid-column: span 4;
+  min-height: 330px;
+}
+
+.lux-icon-frame {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--lux-surface-elevated);
+  border: 1px solid var(--lux-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lux-card-h3 {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin-bottom: 8px !important;
+  letter-spacing: -0.02em !important;
+}
+
+.lux-card-desc {
+  font-size: 14px;
+  color: var(--lux-text-secondary);
+  line-height: 1.6;
+}
+
+/* Interactive Slider Box inside Calculation Card */
+.lux-interactive-calc-box {
+  background: #090a0d;
+  border: 1px solid var(--lux-border);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 14px;
+}
+
+.lux-calc-slider {
+  width: 100%;
+  accent-color: var(--lux-emerald);
+  cursor: pointer;
+}
+
+/* Pinned Engineering Section */
+.lux-pinned-section {
+  position: relative;
+  z-index: 10;
+  padding: 120px 48px;
+  max-width: 1560px;
+  margin: 0 auto;
+  border-top: 1px solid var(--lux-border);
+}
+
+.lux-pinned-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 64px;
+  align-items: flex-start;
+}
+
+.lux-sticky-column {
+  position: sticky;
+  top: 60px;
+}
+
+.lux-engine-cards-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.lux-engine-row {
+  background: var(--lux-surface);
+  border: 1px solid var(--lux-border);
+  border-radius: 14px;
+  padding: 28px;
+  transition: all 0.25s ease;
+}
+
+.lux-engine-row:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+/* Action Banner */
+.lux-cta-section {
+  position: relative;
+  z-index: 10;
+  padding: 90px 48px 110px;
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+.lux-cta-banner {
+  position: relative;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #131720 0%, #0d1016 100%);
+  border: 1px solid var(--lux-border);
+  padding: 70px 40px;
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+}
+
+.lux-cta-glow-spot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 220px;
+  background: radial-gradient(ellipse at top, rgba(16, 185, 129, 0.16) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.lux-cta-title {
+  font-size: clamp(2.2rem, 4vw, 3.5rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  color: #ffffff !important;
+  margin-bottom: 16px !important;
+  line-height: 1.15;
+}
+
+/* Footer */
+.lux-footer {
+  position: relative;
+  z-index: 10;
+  padding: 44px 48px;
+  border-top: 1px solid var(--lux-border);
+  background: #07080a;
+}
+
+.lux-footer-container {
+  max-width: 1560px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+/* Large Display Enhancements (1440px - 4K screens) */
+@media (min-width: 1440px) {
+  .lux-workstation {
+    max-width: 820px;
+    padding: 36px;
+  }
+  .lux-loom-matrix {
+    gap: 10px;
+    padding: 20px;
+  }
+  .lux-loom-cell {
+    height: 72px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+}
+
+@media (min-width: 1680px) {
+  .lux-top-header,
+  .lux-hero,
+  .lux-bento-section,
+  .lux-pinned-section,
+  .lux-cta-section,
+  .lux-footer-container {
+    max-width: 1720px;
+  }
+
+  .lux-workstation {
+    max-width: 900px;
+    padding: 40px;
+  }
+
+  .lux-loom-matrix {
+    gap: 12px;
+    padding: 24px;
+  }
+
+  .lux-loom-cell {
+    height: 80px;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+}
+
+/* Responsiveness for Tablets/Mobile */
+@media (max-width: 980px) {
+  .lux-hero-grid,
+  .lux-pinned-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+
+  .lux-loom-cell {
+    height: 42px;
+    font-size: 10px;
+  }
+
+  .lux-sticky-column {
+    position: static;
+  }
+
+  .lux-bento-8,
+  .lux-bento-4,
+  .lux-bento-sm-4 {
+    grid-column: span 12;
+    min-height: auto;
+  }
+
+  .lux-nav-links {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .lux-hero {
+    padding: 36px 16px 48px;
+    min-height: auto;
+  }
+
+  .lux-top-header {
+    padding: 14px 16px;
+  }
+
+  .lux-brand-name {
+    font-size: 18px;
+  }
+
+  .lux-version-tag {
+    display: none;
+  }
+
+  .lux-hero-h1 {
+    font-size: 2.1rem !important;
+    line-height: 1.15 !important;
+    margin-bottom: 16px !important;
+  }
+
+  .lux-hero-lead {
+    font-size: 14px;
+    line-height: 1.55;
+    margin-bottom: 24px;
+  }
+
+  .lux-hero-btn-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+  }
+
+  .lux-btn-primary,
+  .lux-btn-secondary {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 20px;
+    font-size: 14px;
+  }
+
+  .lux-workstation {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .lux-ws-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+  }
+
+  .lux-ws-chips {
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .lux-chip {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+
+  .lux-loom-matrix {
+    gap: 4px;
+    padding: 8px;
+    border-radius: 10px;
+  }
+
+  .lux-loom-cell {
+    height: 34px;
+    font-size: 8px;
+    border-radius: 4px;
+  }
+
+  .lux-ws-footer {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+
+  .lux-narrative {
+    padding: 50px 16px;
+  }
+
+  .lux-narrative-quote {
+    font-size: 1.2rem !important;
+    line-height: 1.5;
+  }
+
+  .lux-bento-section,
+  .lux-pinned-section {
+    padding: 50px 16px;
+  }
+
+  .lux-bento-card {
+    padding: 20px !important;
+    border-radius: 14px !important;
+  }
+
+  .lux-cta-section {
+    padding: 50px 16px 70px;
+  }
+
+  .lux-cta-banner {
+    padding: 36px 18px;
+    border-radius: 14px;
+  }
+
+  .lux-footer {
+    padding: 32px 16px;
+  }
+
+  .lux-footer-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .lux-footer-container > div:nth-child(2) {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+}
+
+/* ==========================================================================
+   YIELD ENGINE LIVE DEMO SECTION
+   ========================================================================== */
+.lux-yield-demo-section {
+  padding: 90px 32px;
+  max-width: 1360px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 10;
+  scroll-margin-top: 80px;
+}
+
+.lux-yield-demo-container {
+  background: rgba(14, 17, 23, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--lux-border);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5), 0 0 40px rgba(16, 185, 129, 0.05);
+}
+
+.lux-yield-demo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+
+.lux-yield-presets-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--lux-surface);
+  border: 1px solid var(--lux-border);
+  border-radius: 12px;
+}
+
+.lux-yield-preset-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--lux-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lux-yield-preset-chip:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: #ffffff;
+}
+
+.lux-yield-preset-chip.active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: var(--lux-emerald);
+}
+
+.lux-yield-preset-chip .chip-badge {
+  font-size: 9px;
+  font-family: var(--lux-font-mono);
+  padding: 2px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--lux-text-muted);
+}
+
+.lux-yield-demo-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 36px;
+}
+
+.lux-yield-controls-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--lux-border);
+  border-radius: 18px;
+  padding: 28px;
+}
+
+.lux-yield-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--lux-text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lux-yield-mode-btn.active {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--lux-emerald);
+}
+
+.lux-yield-inputs-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lux-yield-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lux-yield-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.lux-yield-label-row label {
+  color: var(--lux-text-secondary);
+  font-weight: 500;
+}
+
+.lux-yield-label-row .highlight {
+  color: var(--lux-emerald);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.lux-yield-results-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--lux-border);
+  border-radius: 18px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+}
+
+.lux-yield-gsm-hero {
+  padding: 22px;
+  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 70%), rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 14px;
+}
+
+.lux-yield-gsm-num {
+  font-size: 52px;
+  font-weight: 800;
+  font-family: var(--lux-font-mono);
+  color: #ffffff;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.lux-yield-spectrum-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #38bdf8 0%, #34d399 30%, #fbbf24 60%, #f97316 85%, #f43f5e 100%);
+  margin-top: 14px;
+  position: relative;
+}
+
+.lux-yield-spectrum-indicator {
+  position: absolute;
+  top: -4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #090a0d;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  transform: translateX(-50%);
+  transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.lux-yield-metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 20px;
+}
+
+.lux-yield-metric-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--lux-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.lux-yield-metric-box .metric-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--lux-text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.lux-yield-metric-box .metric-val {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.lux-yield-metric-box .metric-val .unit {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lux-text-secondary);
+}
+
+.lux-yield-metric-box .metric-sub {
+  font-size: 11px;
+  color: var(--lux-text-muted);
+  margin-top: 4px;
+}
+
+.lux-yield-launch-studio-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--lux-border);
+  color: var(--lux-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--lux-font-mono);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lux-yield-launch-studio-btn:hover {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.35);
+  color: var(--lux-emerald);
+}
+
+@media (max-width: 1024px) {
+  .lux-yield-demo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .lux-yield-demo-section {
+    padding: 50px 16px;
+  }
+
+  .lux-yield-demo-container {
+    padding: 24px 16px;
+    border-radius: 16px;
+  }
+
+  .lux-yield-metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

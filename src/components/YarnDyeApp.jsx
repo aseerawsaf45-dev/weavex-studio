@@ -218,8 +218,9 @@ function YarnDyeApp({ onNavigateHome }) {
         </div>
 
         {/* Center Canvas */}
-        <div className="center-canvas" style={{ padding: '32px', display: 'flex', justifyContent: 'center', alignItems: 'flex-start', background: 'var(--bg-grid)', overflow: 'auto' }}>
-          <div style={{ display: 'inline-block', border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
+        <div className="center-canvas" style={{ padding: '16px', display: 'block', overflowX: 'auto', WebkitOverflowScrolling: 'touch', background: 'var(--bg-grid)' }}>
+          <div style={{ minWidth: 'min-content', display: 'flex', justifyContent: 'center' }}>
+            <div style={{ display: 'inline-block', border: '1px solid var(--border)', borderRadius: '4px', overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.3)' }}>
             {fullWeft.map((weftColor, r) => (
               <div key={r} style={{ display: 'flex' }}>
                 {fullWarp.map((warpColor, c) => {
@@ -245,6 +246,7 @@ function YarnDyeApp({ onNavigateHome }) {
         </div>
       </div>
     </div>
+  </div>
   );
 }
 

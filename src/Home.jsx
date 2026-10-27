@@ -7,7 +7,7 @@ const Home = ({ onSelectMode }) => {
       <p style={{ color: 'var(--text-secondary)', fontSize: '18px', marginBottom: '48px' }}>Select a textile design environment to begin.</p>
       
       <div className="home-cards">
-        {/* KnitCAD Card */}
+        {/* KnitStudio Card */}
         <div 
           onClick={() => onSelectMode('knit')}
           className="card" 
@@ -21,7 +21,7 @@ const Home = ({ onSelectMode }) => {
           <div style={{ width: '80px', height: '80px', borderRadius: '50%', background: 'rgba(78, 255, 197, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
             <span style={{ fontSize: '32px', color: 'var(--accent-primary)' }}>●</span>
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', color: 'var(--text-primary)', marginBottom: '8px' }}>KnitCAD Pro</h2>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '24px', color: 'var(--text-primary)', marginBottom: '8px' }}>Knit Studio Pro</h2>
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center', fontSize: '14px', lineHeight: '1.5' }}>
             Weft-knitted fabric structure design. Design plain jersey, ribs, purls, and jacquards with Knit, Tuck, and Miss loops.
           </p>

@@ -5,7 +5,7 @@ import Toolbar from './components/Toolbar';
 import IntelligencePanel from './components/IntelligencePanel';
 import { LOOP_TYPES, detectRepeatSize, detectStructureName, extractRepeatUnit } from './utils/fabricDetection';
 import { exportToPNG, exportToJSON, exportToCSV } from './utils/exportUtils';
-import { Download, Copy, Save } from 'lucide-react';
+import { Download, Copy, Save, Grid, Sliders, Sparkles } from 'lucide-react';
 import { saveProject } from './utils/projectStore';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
@@ -24,6 +24,13 @@ function KnitApp({ onNavigateHome, activeProject }) {
   const [currentTool, setCurrentTool] = useState('brush'); // brush, eraser
   const [currentLoopType, setCurrentLoopType] = useState(LOOP_TYPES.KNIT);
   const [showHelp, setShowHelp] = useState(false);
+  const [mobileTab, setMobileTab] = useState('grid'); // 'grid', 'tools', 'intelligence'
+  const [cellSize, setCellSize] = useState(() => {
+    if (typeof window === 'undefined') return 48;
+    if (window.innerWidth >= 1024) return 85;
+    if (window.innerWidth < 640) return 32;
+    return 48;
+  });
   
   // History
   const [history, setHistory] = useState([activeProject?.data?.grid || createEmptyGrid(wales, courses)]);
@@ -200,6 +207,42 @@ function KnitApp({ onNavigateHome, activeProject }) {
           />
         </div>
         <div className="header-actions">
+          <div className="zoom-control-bar" style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'var(--bg-surface)', padding: '4px 8px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Zoom:</span>
+            <button 
+              onClick={() => setCellSize(prev => Math.max(24, prev - 4))} 
+              className="btn-secondary" 
+              style={{ padding: '2px 8px', fontSize: '13px', lineHeight: 1 }}
+              title="Zoom Out"
+            >-</button>
+            <span style={{ fontSize: '11px', minWidth: '40px', textAlign: 'center', fontFamily: 'var(--font-mono)', fontWeight: '600', color: cellSize === 85 ? 'var(--accent-primary)' : 'inherit' }}>
+              {cellSize === 85 ? 178 : Math.round((cellSize / 48) * 100)}%
+            </span>
+            <button 
+              onClick={() => setCellSize(prev => Math.min(108, prev + 4))} 
+              className="btn-secondary" 
+              style={{ padding: '2px 8px', fontSize: '13px', lineHeight: 1 }}
+              title="Zoom In"
+            >+</button>
+            <button 
+              onClick={() => setCellSize(32)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 6px', fontSize: '10px', fontWeight: cellSize === 32 ? 'bold' : 'normal', color: cellSize === 32 ? 'var(--accent-primary)' : 'inherit', background: cellSize === 32 ? 'rgba(78, 255, 197, 0.12)' : undefined }}
+              title="Fit to Mobile Screen (32px)"
+            >Fit</button>
+            <button 
+              onClick={() => setCellSize(48)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 6px', fontSize: '10px', opacity: 0.8 }}
+              title="Reset to 100% (48px)"
+            >100%</button>
+            <button 
+              onClick={() => setCellSize(85)} 
+              className="btn-secondary" 
+              style={{ padding: '2px 7px', fontSize: '10px', fontWeight: cellSize === 85 ? 'bold' : 'normal', color: cellSize === 85 ? 'var(--accent-primary)' : 'inherit', background: cellSize === 85 ? 'rgba(78, 255, 197, 0.12)' : undefined }}
+              title="Preset Zoom 178% (Optimized for Larger Screens)"
+            >178%</button>
+          </div>
           <button className="btn-secondary" onClick={handleSaveProject} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Save size={16} /> Save
           </button>
@@ -218,11 +261,36 @@ function KnitApp({ onNavigateHome, activeProject }) {
         </div>
       </header>
 
+      {/* Mobile Screen Tab Navigation */}
+      <div className="woven-mobile-tabs">
+        <button 
+          onClick={() => setMobileTab('grid')} 
+          className={`woven-mob-tab ${mobileTab === 'grid' ? 'active' : ''}`}
+        >
+          <Grid size={15} />
+          <span>Knit Grid</span>
+        </button>
+        <button 
+          onClick={() => setMobileTab('tools')} 
+          className={`woven-mob-tab ${mobileTab === 'tools' ? 'active' : ''}`}
+        >
+          <Sliders size={15} />
+          <span>Needle Tools</span>
+        </button>
+        <button 
+          onClick={() => setMobileTab('intelligence')} 
+          className={`woven-mob-tab ${mobileTab === 'intelligence' ? 'active' : ''}`}
+        >
+          <Sparkles size={15} />
+          <span>Analysis & Yield</span>
+        </button>
+      </div>
+
       {/* Main Workspace */}
       <div className="workspace-container knit-app">
         
         {/* Left Sidebar */}
-        <div className="sidebar-left" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px' }}>
+        <div className={`sidebar-left ${mobileTab !== 'tools' ? 'woven-mob-hidden' : ''}`} style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '24px' }}>
           <div>
             <Toolbar 
               currentTool={currentTool} setCurrentTool={setCurrentTool}
@@ -235,12 +303,12 @@ function KnitApp({ onNavigateHome, activeProject }) {
             />
           </div>
           <div style={{ marginTop: '24px', fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>
-            © 2026 KnitCAD Platform
+            © Developed by Aseer Awsaf
           </div>
         </div>
 
         {/* Center Canvas */}
-        <div className="center-canvas" style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
+        <div className={`center-canvas ${mobileTab !== 'grid' ? 'woven-mob-hidden' : ''}`} style={{ display: 'flex', flexDirection: 'column', padding: '24px' }}>
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', color: 'var(--text-secondary)' }}>
             Grid Size: {wales}W × {courses}C
           </div>
@@ -251,11 +319,12 @@ function KnitApp({ onNavigateHome, activeProject }) {
             wales={wales} courses={courses}
             repeatUnit={repeatUnit}
             onHistoryChange={handleGridChange}
+            cellSize={cellSize}
           />
         </div>
 
         {/* Right Sidebar */}
-        <div className="sidebar-right" style={{ padding: '24px' }}>
+        <div className={`sidebar-right ${mobileTab !== 'intelligence' ? 'woven-mob-hidden' : ''}`} style={{ padding: '24px' }}>
           <IntelligencePanel 
             structureName={structureName}
             confidence={confidence}
