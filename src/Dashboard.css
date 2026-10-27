@@ -531,6 +531,27 @@
   justify-content: center;
 }
 
+.dash-sim-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.dash-sim-tool-btn:hover {
+  background: rgba(255, 255, 255, 0.09);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
 .dash-sim-cell:hover {
   transform: scale(1.15);
   z-index: 2;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   Scissors, 
   Grid3X3, 
@@ -23,7 +23,16 @@ import {
   RotateCcw,
   Palette,
   BarChart3,
-  BookmarkCheck
+  BookmarkCheck,
+  Eye,
+  Download,
+  FlipHorizontal,
+  FlipVertical,
+  RefreshCw,
+  Sliders,
+  Scale,
+  Zap,
+  Check
 } from 'lucide-react';
 import { getProjects, deleteProject, saveProject } from './utils/projectStore';
 import Calculations from './components/Calculations';
@@ -146,6 +155,26 @@ const SIMULATOR_PRESETS = {
     [1, 1, 0, 0, 1, 1, 0, 0],
     [0, 0, 1, 1, 0, 0, 1, 1],
     [0, 0, 1, 1, 0, 0, 1, 1],
+  ],
+  herringbone: [
+    [1, 1, 0, 0, 0, 0, 1, 1],
+    [0, 1, 1, 0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 0, 0],
+    [1, 0, 0, 1, 1, 0, 0, 1],
+    [1, 1, 0, 0, 0, 0, 1, 1],
+    [0, 1, 1, 0, 0, 1, 1, 0],
+    [0, 0, 1, 1, 1, 1, 0, 0],
+    [1, 0, 0, 1, 1, 0, 0, 1],
+  ],
+  diamond: [
+    [0, 0, 0, 1, 1, 0, 0, 0],
+    [0, 0, 1, 0, 0, 1, 0, 0],
+    [0, 1, 0, 0, 0, 0, 1, 0],
+    [1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 1],
+    [0, 1, 0, 0, 0, 0, 1, 0],
+    [0, 0, 1, 0, 0, 1, 0, 0],
+    [0, 0, 0, 1, 1, 0, 0, 0],
   ]
 };
 
@@ -170,11 +199,27 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
   const [projects, setProjects] = useState([]);
   const [activeTab, setActiveTab] = useState(initialTab);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedDiscipline, setSelectedDiscipline] = useState('all');
 
   // Interactive Live Loom Simulator State
   const [simGrid, setSimGrid] = useState(SIMULATOR_PRESETS.twill);
   const [selectedColorIdx, setSelectedColorIdx] = useState(0);
   const [activePreset, setActivePreset] = useState('twill');
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'cloth'
+
+  // Yarn Converter State
+  const [inputCount, setInputCount] = useState('30');
+  const [inputSystem, setInputSystem] = useState('ne');
+  const [copiedKey, setCopiedKey] = useState(null);
+
+  // Quick GSM Estimator State
+  const [gsmInputs, setGsmInputs] = useState({
+    warpNe: 30,
+    weftNe: 30,
+    epi: 80,
+    ppi: 70,
+    crimp: 6
+  });
 
   useEffect(() => {
     if (initialTab) {
@@ -211,7 +256,6 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
 
   const handleSelectBlueprintToSim = (bp) => {
     if (bp.grid) {
-      // Map any knit 2 values to 0 for binary simulator
       const binaryGrid = bp.grid.map(row => row.map(val => val === 1 ? 1 : 0));
       setSimGrid(binaryGrid);
       setActivePreset('');
@@ -233,6 +277,42 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
     setSimGrid(SIMULATOR_PRESETS[key]);
   };
 
+  // Matrix Transformation Functions
+  const handleInvertMatrix = () => {
+    setSimGrid(prev => prev.map(row => row.map(cell => cell === 1 ? 0 : 1)));
+    setActivePreset('');
+  };
+
+  const handleShiftWarp = () => {
+    setSimGrid(prev => {
+      const lastRow = prev[prev.length - 1];
+      return [lastRow, ...prev.slice(0, prev.length - 1)];
+    });
+    setActivePreset('');
+  };
+
+  const handleShiftWeft = () => {
+    setSimGrid(prev => prev.map(row => {
+      const lastCell = row[row.length - 1];
+      return [lastCell, ...row.slice(0, row.length - 1)];
+    }));
+    setActivePreset('');
+  };
+
+  const handleMirrorH = () => {
+    setSimGrid(prev => prev.map(row => [...row].reverse()));
+    setActivePreset('');
+  };
+
+  const handleMirrorV = () => {
+    setSimGrid(prev => [...prev].reverse());
+    setActivePreset('');
+  };
+
+  const handleResetSim = () => {
+    handleApplyPreset('twill');
+  };
+
   // Real-time Telemetry Calculations from simGrid
   const telemetry = useMemo(() => {
     let totalCells = 0;
@@ -241,7 +321,6 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
     const rows = simGrid.length;
     const cols = simGrid[0]?.length || 8;
 
-    // Distinct shafts needed (unique rows)
     const uniqueRows = new Set();
 
     for (let r = 0; r < rows; r++) {
@@ -251,7 +330,6 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
         if (simGrid[r][c] === 1) warpUp++;
         rowSig += simGrid[r][c];
 
-        // Check horizontal transition
         const nextC = (c + 1) % cols;
         if (simGrid[r][c] !== simGrid[r][nextC]) {
           interlacements++;
@@ -284,9 +362,97 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
     onOpenProject(newProj);
   };
 
-  const filteredProjects = projects.filter(p => 
-    (p.name || 'Untitled').toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Download Canvas Swatch
+  const handleDownloadSwatch = () => {
+    const canvas = document.createElement('canvas');
+    const scale = 32;
+    const rows = simGrid.length;
+    const cols = simGrid[0].length;
+    canvas.width = cols * scale;
+    canvas.height = rows * scale;
+    const ctx = canvas.getContext('2d');
+
+    const pal = COLOR_PALETTES[selectedColorIdx];
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const isWarp = simGrid[r][c] === 1;
+        ctx.fillStyle = isWarp ? pal.warp : pal.weft;
+        ctx.fillRect(c * scale, r * scale, scale, scale);
+
+        // Grid line
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(c * scale, r * scale, scale, scale);
+      }
+    }
+
+    const link = document.createElement('a');
+    link.download = `weavex-structure-${Date.now()}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  };
+
+  // Yarn Numbering Conversions
+  const convertedCounts = useMemo(() => {
+    const val = parseFloat(inputCount);
+    if (!val || val <= 0) return { ne: '-', nm: '-', tex: '-', denier: '-', dtex: '-' };
+
+    let tex = 0;
+    if (inputSystem === 'ne') tex = 590.54 / val;
+    else if (inputSystem === 'nm') tex = 1000 / val;
+    else if (inputSystem === 'tex') tex = val;
+    else if (inputSystem === 'denier') tex = val / 9;
+    else if (inputSystem === 'dtex') tex = val / 10;
+
+    return {
+      ne: (590.54 / tex).toFixed(2),
+      nm: (1000 / tex).toFixed(2),
+      tex: tex.toFixed(2),
+      denier: (tex * 9).toFixed(1),
+      dtex: (tex * 10).toFixed(1)
+    };
+  }, [inputCount, inputSystem]);
+
+  const copyToClipboard = (key, text) => {
+    navigator.clipboard.writeText(text);
+    setCopiedKey(key);
+    setTimeout(() => setCopiedKey(null), 1500);
+  };
+
+  // Quick GSM Calculation
+  const quickGsm = useMemo(() => {
+    const { warpNe, weftNe, epi, ppi, crimp } = gsmInputs;
+    if (!warpNe || !weftNe || !epi || !ppi) return { gsm: 0, oz: 0, classification: 'N/A' };
+
+    const crimpMultiplier = 1 + (crimp / 100);
+    // Standard industry formula: GSM = (EPI / Warp_Ne + PPI / Weft_Ne) * 23.25 * crimpFactor (or 25.6 standard)
+    const warpWeightGsm = (epi / warpNe) * 24.6 * crimpMultiplier;
+    const weftWeightGsm = (ppi / weftNe) * 24.6 * crimpMultiplier;
+    const totalGsm = Math.round(warpWeightGsm + weftWeightGsm);
+    const ozPerYd2 = (totalGsm / 33.906).toFixed(1);
+
+    let classification = 'Medium Weight';
+    if (totalGsm < 110) classification = 'Lightweight / Shirting / Voile';
+    else if (totalGsm < 190) classification = 'Medium Shirting / Poplin';
+    else if (totalGsm < 300) classification = 'Bottom-weight / Chino Twill';
+    else classification = 'Heavy Denim / Canvas / Upholstery';
+
+    return {
+      totalGsm,
+      ozPerYd2,
+      warpWeightGsm: Math.round(warpWeightGsm),
+      weftWeightGsm: Math.round(weftWeightGsm),
+      classification
+    };
+  }, [gsmInputs]);
+
+  // Project filtering
+  const filteredProjects = projects.filter(p => {
+    const matchesSearch = (p.name || 'Untitled').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDisc = selectedDiscipline === 'all' || p.type === selectedDiscipline;
+    return matchesSearch && matchesDisc;
+  });
 
   const activePalette = COLOR_PALETTES[selectedColorIdx];
 
@@ -662,20 +828,43 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                   </div>
                   
                   {projects.length > 0 && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {/* Discipline filter chips */}
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {['all', 'woven', 'knit', 'doublejersey'].map(disc => (
+                          <button
+                            key={disc}
+                            onClick={() => setSelectedDiscipline(disc)}
+                            style={{
+                              padding: '3px 8px',
+                              borderRadius: '6px',
+                              fontSize: '11px',
+                              fontFamily: 'JetBrains Mono, monospace',
+                              background: selectedDiscipline === disc ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+                              border: selectedDiscipline === disc ? '1px solid rgba(56, 189, 248, 0.4)' : '1px solid rgba(255, 255, 255, 0.06)',
+                              color: selectedDiscipline === disc ? '#38bdf8' : '#94a3b8',
+                              cursor: 'pointer',
+                              textTransform: 'capitalize'
+                            }}
+                          >
+                            {disc}
+                          </button>
+                        ))}
+                      </div>
+
                       <input
                         type="text"
-                        placeholder="Search saved structures..."
+                        placeholder="Search vault..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         style={{
-                          padding: '6px 12px',
-                          fontSize: '12px',
+                          padding: '5px 10px',
+                          fontSize: '11.5px',
                           background: 'rgba(255, 255, 255, 0.04)',
                           border: '1px solid rgba(255, 255, 255, 0.1)',
                           borderRadius: '8px',
                           color: '#ffffff',
-                          width: '180px'
+                          width: '140px'
                         }}
                       />
                     </div>
@@ -714,7 +903,7 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                               color: p.type === 'woven' ? '#10b981' : '#38bdf8' 
                             }}
                           >
-                            {p.type === 'woven' ? 'WeaveDraft' : 'KnitStudio'}
+                            {p.type === 'woven' ? 'WeaveDraft' : (p.type === 'knit' ? 'KnitStudio' : 'Double Jersey')}
                           </span>
                         </div>
 
@@ -767,7 +956,7 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                     }}>
                       <div style={{ fontSize: '12.5px', color: '#94a3b8' }}>
                         <strong style={{ color: '#ffffff', marginRight: '6px' }}>Instant Blueprints:</strong>
-                        Click any card to load its matrix into the Live Simulator or launch into production editor.
+                        Click any card to load into the Live Simulator or launch into production editor.
                       </div>
                     </div>
 
@@ -854,7 +1043,7 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                 )}
               </div>
 
-              {/* RIGHT COLUMN: Interactive Live Loom Simulator & Real-time Telemetry */}
+              {/* RIGHT COLUMN: Interactive Live Loom Simulator 2.0 */}
               <div className="dash-simulator-console">
                 
                 <div className="dash-simulator-header">
@@ -866,53 +1055,109 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                       </h3>
                     </div>
                     <p style={{ fontSize: '11.5px', color: '#64748b', margin: '3px 0 0 0', fontFamily: 'JetBrains Mono, monospace' }}>
-                      Interactive Interlacement Testing • 8×8 Synchronized Repeat
+                      8×8 Synchronized Interlacement Engine • Live Render
                     </p>
                   </div>
 
-                  <button
-                    onClick={handleExportSimToWeaveDraft}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      padding: '7px 12px',
-                      borderRadius: '8px',
-                      background: 'rgba(16, 185, 129, 0.15)',
-                      border: '1px solid rgba(16, 185, 129, 0.35)',
-                      color: '#10b981',
-                      fontSize: '11px',
-                      fontFamily: 'JetBrains Mono, monospace',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s ease'
-                    }}
-                    onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.25)'}
-                    onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.15)'}
-                    title="Transfer this matrix to WeaveDraft 4-Part Studio"
-                  >
-                    <span>Clone to Studio</span>
-                    <ArrowRight size={12} />
-                  </button>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    {/* View Mode Toggle */}
+                    <div style={{ display: 'flex', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '7px', padding: '2px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                      <button
+                        onClick={() => setViewMode('grid')}
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: '5px',
+                          border: 'none',
+                          background: viewMode === 'grid' ? '#10b981' : 'transparent',
+                          color: viewMode === 'grid' ? '#000000' : '#94a3b8',
+                          fontSize: '10.5px',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Grid
+                      </button>
+                      <button
+                        onClick={() => setViewMode('cloth')}
+                        style={{
+                          padding: '4px 8px',
+                          borderRadius: '5px',
+                          border: 'none',
+                          background: viewMode === 'cloth' ? '#10b981' : 'transparent',
+                          color: viewMode === 'cloth' ? '#000000' : '#94a3b8',
+                          fontSize: '10.5px',
+                          fontFamily: 'JetBrains Mono, monospace',
+                          fontWeight: '600',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        3D Woven
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={handleDownloadSwatch}
+                      style={{
+                        padding: '6px 10px',
+                        borderRadius: '8px',
+                        background: 'rgba(255, 255, 255, 0.04)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        color: '#94a3b8',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px'
+                      }}
+                      title="Download PNG Swatch"
+                    >
+                      <Download size={13} />
+                    </button>
+
+                    <button
+                      onClick={handleExportSimToWeaveDraft}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        background: 'rgba(16, 185, 129, 0.15)',
+                        border: '1px solid rgba(16, 185, 129, 0.35)',
+                        color: '#10b981',
+                        fontSize: '11px',
+                        fontFamily: 'JetBrains Mono, monospace',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.25)'}
+                      onMouseLeave={(e) => e.currentTarget.style.background = 'rgba(16, 185, 129, 0.15)'}
+                      title="Transfer this matrix to WeaveDraft 4-Part Studio"
+                    >
+                      <span>Clone to Studio</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Preset Switcher Row */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <span style={{ fontSize: '10.5px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', textTransform: 'uppercase' }}>
-                      Patterns:
+                {/* Pattern Presets & Colorways */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '5px', flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', textTransform: 'uppercase' }}>
+                      Presets:
                     </span>
                     {Object.keys(SIMULATOR_PRESETS).map(key => (
                       <button
                         key={key}
                         onClick={() => handleApplyPreset(key)}
                         style={{
-                          padding: '4px 9px',
+                          padding: '3px 8px',
                           borderRadius: '6px',
                           background: activePreset === key ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255, 255, 255, 0.04)',
                           border: activePreset === key ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
                           color: activePreset === key ? '#10b981' : '#94a3b8',
-                          fontSize: '10.5px',
+                          fontSize: '10px',
                           fontFamily: 'JetBrains Mono, monospace',
                           textTransform: 'capitalize',
                           cursor: 'pointer'
@@ -925,14 +1170,14 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
 
                   {/* Palette Selector */}
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <Palette size={13} style={{ color: '#64748b' }} />
+                    <Palette size={12} style={{ color: '#64748b' }} />
                     {COLOR_PALETTES.map((pal, idx) => (
                       <div
                         key={pal.name}
                         onClick={() => setSelectedColorIdx(idx)}
                         style={{
-                          width: '15px',
-                          height: '15px',
+                          width: '14px',
+                          height: '14px',
                           borderRadius: '50%',
                           backgroundColor: pal.warp,
                           cursor: 'pointer',
@@ -946,34 +1191,116 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                   </div>
                 </div>
 
+                {/* Matrix Transforms Toolbar */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px', background: 'rgba(255, 255, 255, 0.02)', padding: '6px 10px', borderRadius: '8px', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
+                  <span style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', textTransform: 'uppercase', marginRight: '4px' }}>
+                    Transforms:
+                  </span>
+                  
+                  <button onClick={handleInvertMatrix} className="dash-sim-tool-btn" title="Invert Face / Back">
+                    <RefreshCw size={11} />
+                    <span>Invert</span>
+                  </button>
+
+                  <button onClick={handleShiftWarp} className="dash-sim-tool-btn" title="Shift Warp Down +1">
+                    <ArrowRight size={11} style={{ transform: 'rotate(90deg)' }} />
+                    <span>Shift Warp</span>
+                  </button>
+
+                  <button onClick={handleShiftWeft} className="dash-sim-tool-btn" title="Shift Weft Right +1">
+                    <ArrowRight size={11} />
+                    <span>Shift Weft</span>
+                  </button>
+
+                  <button onClick={handleMirrorH} className="dash-sim-tool-btn" title="Mirror Horizontal">
+                    <FlipHorizontal size={11} />
+                    <span>Mirror H</span>
+                  </button>
+
+                  <button onClick={handleMirrorV} className="dash-sim-tool-btn" title="Mirror Vertical">
+                    <FlipVertical size={11} />
+                    <span>Mirror V</span>
+                  </button>
+
+                  <button onClick={handleResetSim} className="dash-sim-tool-btn" title="Reset to standard 2/2 Twill" style={{ marginLeft: 'auto', color: '#f43f5e' }}>
+                    <RotateCcw size={11} />
+                    <span>Reset</span>
+                  </button>
+                </div>
+
                 {/* The Interactive Weave Grid Box */}
                 <div className="dash-sim-grid-wrap">
-                  <div 
-                    className="dash-sim-interactive-grid" 
-                    style={{ gridTemplateColumns: `repeat(${simGrid[0]?.length || 8}, 22px)` }}
-                  >
-                    {simGrid.map((row, rIdx) => 
-                      row.map((cell, cIdx) => (
-                        <div
-                          key={`sim-${rIdx}-${cIdx}`}
-                          className="dash-sim-cell"
-                          onClick={() => toggleSimCell(rIdx, cIdx)}
-                          style={{
-                            backgroundColor: cell === 1 ? activePalette.warp : activePalette.weft,
-                            boxShadow: cell === 1 ? `0 0 6px ${activePalette.warp}80` : 'none',
-                            border: '1px solid rgba(255, 255, 255, 0.06)'
-                          }}
-                          title={`Row ${rIdx + 1}, Col ${cIdx + 1}: Click to flip lift state`}
-                        >
-                          <span style={{ fontSize: '8px', color: cell === 1 ? '#000000' : '#64748b', fontWeight: 'bold' }}>
-                            {cell === 1 ? '↑' : '·'}
-                          </span>
-                        </div>
-                      ))
-                    )}
-                  </div>
+                  {viewMode === 'grid' ? (
+                    /* Standard Drafting Grid */
+                    <div 
+                      className="dash-sim-interactive-grid" 
+                      style={{ gridTemplateColumns: `repeat(${simGrid[0]?.length || 8}, 24px)` }}
+                    >
+                      {simGrid.map((row, rIdx) => 
+                        row.map((cell, cIdx) => (
+                          <div
+                            key={`sim-${rIdx}-${cIdx}`}
+                            className="dash-sim-cell"
+                            onClick={() => toggleSimCell(rIdx, cIdx)}
+                            style={{
+                              backgroundColor: cell === 1 ? activePalette.warp : activePalette.weft,
+                              boxShadow: cell === 1 ? `0 0 6px ${activePalette.warp}80` : 'none',
+                              border: '1px solid rgba(255, 255, 255, 0.08)'
+                            }}
+                            title={`Row ${rIdx + 1}, Col ${cIdx + 1}: Click to flip lift state`}
+                          >
+                            <span style={{ fontSize: '9px', color: cell === 1 ? '#000000' : '#94a3b8', fontWeight: 'bold' }}>
+                              {cell === 1 ? '↑' : '·'}
+                            </span>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  ) : (
+                    /* Realistic 3D Simulated Woven Fabric Texture */
+                    <div 
+                      style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: `repeat(${simGrid[0]?.length || 8}, 24px)`,
+                        gap: '0px',
+                        background: '#020305',
+                        padding: '12px',
+                        borderRadius: '10px',
+                        boxShadow: 'inset 0 0 20px rgba(0, 0, 0, 0.8)'
+                      }}
+                    >
+                      {simGrid.map((row, rIdx) => 
+                        row.map((cell, cIdx) => {
+                          const isWarp = cell === 1;
+                          return (
+                            <div
+                              key={`cloth-${rIdx}-${cIdx}`}
+                              onClick={() => toggleSimCell(rIdx, cIdx)}
+                              style={{
+                                width: '24px',
+                                height: '24px',
+                                cursor: 'pointer',
+                                position: 'relative',
+                                background: isWarp 
+                                  ? `linear-gradient(90deg, rgba(0,0,0,0.4) 0%, ${activePalette.warp} 50%, rgba(0,0,0,0.4) 100%)`
+                                  : `linear-gradient(0deg, rgba(0,0,0,0.5) 0%, ${activePalette.weft} 50%, rgba(0,0,0,0.5) 100%)`,
+                                boxShadow: isWarp 
+                                  ? '0 2px 5px rgba(0,0,0,0.6)' 
+                                  : 'inset 0 2px 4px rgba(0,0,0,0.7)',
+                                borderRadius: '2px',
+                                transition: 'all 0.15s ease'
+                              }}
+                              title={`Thread ${rIdx + 1}×${cIdx + 1}: ${isWarp ? 'Warp Floating' : 'Weft Floating'}`}
+                            />
+                          );
+                        })
+                      )}
+                    </div>
+                  )}
                   <div style={{ fontSize: '10.5px', color: '#64748b', fontFamily: 'JetBrains Mono, monospace', marginTop: '10px' }}>
-                    ↑ Warp Over (Face) • · Weft Over (Back) • Click any cell to toggle
+                    {viewMode === 'grid' 
+                      ? '↑ Warp Over (Face) • · Weft Over (Back) • Click any cell to toggle'
+                      : 'Photorealistic 3D Cylindrical Yarn Interlacement Simulation'}
                   </div>
                 </div>
 
@@ -1017,6 +1344,215 @@ const Dashboard = ({ onSelectMode, onOpenProject, initialTab = 'dashboard' }) =>
                   <span style={{ color: '#ffffff', fontWeight: '700' }}>{telemetry.tightnessScore} / 100 Index</span>
                 </div>
 
+              </div>
+
+            </div>
+
+            {/* TWO POWERFUL NEW ENGINEERING UTILITIES SIDE-BY-SIDE */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '36px' }}>
+              
+              {/* Utility 1: Universal Yarn Count Numbering Converter */}
+              <div style={{ 
+                background: 'rgba(13, 16, 23, 0.7)', 
+                border: '1px solid rgba(255, 255, 255, 0.07)', 
+                borderRadius: '16px', 
+                padding: '22px 24px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Scale size={16} style={{ color: '#38bdf8' }} />
+                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#ffffff', margin: 0 }}>
+                      Universal Yarn Count Converter
+                    </h3>
+                  </div>
+                  <span style={{ fontSize: '10.5px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b' }}>
+                    Direct &amp; Indirect Systems
+                  </span>
+                </div>
+
+                {/* Input row */}
+                <div style={{ display: 'flex', gap: '10px', marginBottom: '16px' }}>
+                  <input
+                    type="number"
+                    step="any"
+                    value={inputCount}
+                    onChange={(e) => setInputCount(e.target.value)}
+                    placeholder="Enter yarn count..."
+                    style={{
+                      flex: 1,
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      background: 'rgba(255, 255, 255, 0.04)',
+                      border: '1px solid rgba(255, 255, 255, 0.1)',
+                      color: '#ffffff',
+                      fontSize: '14px',
+                      fontFamily: 'JetBrains Mono, monospace'
+                    }}
+                  />
+                  <select
+                    value={inputSystem}
+                    onChange={(e) => setInputSystem(e.target.value)}
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      background: 'rgba(255, 255, 255, 0.08)',
+                      border: '1px solid rgba(255, 255, 255, 0.12)',
+                      color: '#ffffff',
+                      fontSize: '13px',
+                      fontFamily: 'JetBrains Mono, monospace',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <option value="ne">Cotton Count (Ne)</option>
+                    <option value="nm">Metric Count (Nm)</option>
+                    <option value="tex">Linear Density (Tex)</option>
+                    <option value="denier">Filament (Denier)</option>
+                    <option value="dtex">Decitex (dtex)</option>
+                  </select>
+                </div>
+
+                {/* Real-time Equivalents Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '8px' }}>
+                  {[
+                    { key: 'ne', label: 'Cotton Ne', val: convertedCounts.ne },
+                    { key: 'nm', label: 'Metric Nm', val: convertedCounts.nm },
+                    { key: 'tex', label: 'Tex', val: convertedCounts.tex },
+                    { key: 'denier', label: 'Denier', val: convertedCounts.denier },
+                    { key: 'dtex', label: 'Dtex', val: convertedCounts.dtex }
+                  ].map(item => (
+                    <div 
+                      key={item.key}
+                      onClick={() => copyToClipboard(item.key, item.val)}
+                      style={{
+                        padding: '10px 8px',
+                        borderRadius: '10px',
+                        background: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                        textAlign: 'center',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.borderColor = 'rgba(56, 189, 248, 0.4)'}
+                      onMouseLeave={(e) => e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.06)'}
+                      title="Click to copy value"
+                    >
+                      <div style={{ fontSize: '9.5px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', marginBottom: '3px' }}>
+                        {item.label}
+                      </div>
+                      <div style={{ fontSize: '13.5px', fontFamily: 'JetBrains Mono, monospace', fontWeight: '700', color: copiedKey === item.key ? '#38bdf8' : '#ffffff' }}>
+                        {copiedKey === item.key ? 'COPIED' : item.val}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Utility 2: Rapid GSM & Fabric Weight Estimator */}
+              <div style={{ 
+                background: 'rgba(13, 16, 23, 0.7)', 
+                border: '1px solid rgba(255, 255, 255, 0.07)', 
+                borderRadius: '16px', 
+                padding: '22px 24px' 
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Sliders size={16} style={{ color: '#fbbf24' }} />
+                    <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#ffffff', margin: 0 }}>
+                      Rapid Fabric GSM Estimator
+                    </h3>
+                  </div>
+                  <span style={{ 
+                    fontSize: '10.5px', 
+                    fontFamily: 'JetBrains Mono, monospace', 
+                    padding: '2px 8px', 
+                    borderRadius: '4px', 
+                    background: 'rgba(251, 191, 36, 0.12)', 
+                    color: '#fbbf24' 
+                  }}>
+                    {quickGsm.classification}
+                  </span>
+                </div>
+
+                {/* 4 Mini Slider/Input Controls */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginBottom: '16px' }}>
+                  <div>
+                    <label style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                      Warp Ne: {gsmInputs.warpNe}
+                    </label>
+                    <input
+                      type="number"
+                      value={gsmInputs.warpNe}
+                      onChange={(e) => setGsmInputs({ ...gsmInputs, warpNe: parseFloat(e.target.value) || 1 })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '12px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                      Weft Ne: {gsmInputs.weftNe}
+                    </label>
+                    <input
+                      type="number"
+                      value={gsmInputs.weftNe}
+                      onChange={(e) => setGsmInputs({ ...gsmInputs, weftNe: parseFloat(e.target.value) || 1 })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '12px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                      EPI: {gsmInputs.epi}
+                    </label>
+                    <input
+                      type="number"
+                      value={gsmInputs.epi}
+                      onChange={(e) => setGsmInputs({ ...gsmInputs, epi: parseFloat(e.target.value) || 1 })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '12px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#64748b', display: 'block', marginBottom: '4px' }}>
+                      PPI: {gsmInputs.ppi}
+                    </label>
+                    <input
+                      type="number"
+                      value={gsmInputs.ppi}
+                      onChange={(e) => setGsmInputs({ ...gsmInputs, ppi: parseFloat(e.target.value) || 1 })}
+                      style={{ width: '100%', padding: '6px 8px', borderRadius: '6px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', fontSize: '12px' }}
+                    />
+                  </div>
+                </div>
+
+                {/* Computed Results Bar */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: '10px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                  <div>
+                    <span style={{ fontSize: '11px', color: '#94a3b8', marginRight: '6px' }}>Predicted GSM:</span>
+                    <strong style={{ fontSize: '17px', color: '#fbbf24', fontFamily: 'JetBrains Mono, monospace' }}>
+                      {quickGsm.totalGsm} g/m²
+                    </strong>
+                    <span style={{ fontSize: '11px', color: '#64748b', marginLeft: '6px' }}>({quickGsm.ozPerYd2} oz/yd²)</span>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('calculations')}
+                    style={{
+                      background: 'transparent',
+                      border: 'none',
+                      color: '#34d399',
+                      fontSize: '11.5px',
+                      fontFamily: 'JetBrains Mono, monospace',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>Full Yield Engine</span>
+                    <ArrowRight size={12} />
+                  </button>
+                </div>
               </div>
 
             </div>
