@@ -8,7 +8,8 @@ import YarnDyeApp from './components/YarnDyeApp';
 import { Lock } from 'lucide-react';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Password check disabled for now
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [appMode, setAppMode] = useState('home'); // 'home', 'knit', 'woven'
