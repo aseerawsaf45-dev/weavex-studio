@@ -874,6 +874,24 @@
   flex-wrap: wrap;
 }
 
+.lux-yield-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 10px 0;
+  line-height: 1.15;
+}
+
+.lux-yield-subtitle {
+  color: var(--lux-text-secondary);
+  font-size: 14.5px;
+  line-height: 1.6;
+  max-width: 640px;
+  margin: 0;
+}
+
 .lux-yield-presets-bar {
   display: flex;
   align-items: center;

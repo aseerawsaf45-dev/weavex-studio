@@ -7,9 +7,7 @@ import {
   DollarSign, 
   Activity, 
   ArrowRight, 
-  RefreshCw,
-  Sparkles,
-  Info
+  Sparkles
 } from 'lucide-react';
 
 const PRESETS = [
@@ -75,22 +73,26 @@ const PRESETS = [
   }
 ];
 
+// Helper to compute CSS gradient fill for range sliders
+const getSliderBg = (val, min, max) => {
+  const pct = Math.min(Math.max(((val - min) / (max - min)) * 100, 0), 100);
+  return `linear-gradient(to right, #10b981 0%, #10b981 ${pct}%, rgba(255, 255, 255, 0.16) ${pct}%, rgba(255, 255, 255, 0.16) 100%)`;
+};
+
 export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
-  const [activePreset, setActivePreset] = useState('poplin');
-  const [mode, setMode] = useState('woven'); // 'woven' or 'knit'
+  const [activePreset, setActivePreset] = useState('jersey');
+  const [mode, setMode] = useState('knit'); // 'woven' or 'knit'
 
-  // Woven Parameters
-  const [epi, setEpi] = useState(100);
-  const [ppi, setPpi] = useState(72);
-  const [warpCount, setWarpCount] = useState(40);
-  const [weftCount, setWeftCount] = useState(40);
-  const [width, setWidth] = useState(58);
+  // Woven / Knit Parameters
+  const [epi, setEpi] = useState(32);
+  const [ppi, setPpi] = useState(40);
+  const [warpCount, setWarpCount] = useState(30);
+  const [weftCount, setWeftCount] = useState(30);
+  const [width, setWidth] = useState(62);
   const [length, setLength] = useState(100);
-  const [warpCrimp, setWarpCrimp] = useState(7.5);
-  const [weftCrimp, setWeftCrimp] = useState(5.5);
-  const [pricePerLb, setPricePerLb] = useState(4.80);
-
-  // Knit-specific parameters
+  const [warpCrimp, setWarpCrimp] = useState(8.0);
+  const [weftCrimp, setWeftCrimp] = useState(5.0);
+  const [pricePerLb, setPricePerLb] = useState(5.20);
   const [stitchLengthCm, setStitchLengthCm] = useState(0.29);
 
   const applyPreset = (preset) => {
@@ -148,7 +150,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
         warpLbs: warpLbs.toFixed(1),
         weftLbs: weftLbs.toFixed(1),
         totalEnds,
-        totalPicks: Math.round(totalPicks / 1000) + 'k',
+        totalPicks: Math.round(totalPicks / 1000) + 'k picks',
         warpRatio,
         weftRatio,
         costPerYard,
@@ -183,8 +185,8 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
         totalKg: totalKg.toFixed(1),
         warpLbs: yarnWeightLbs.toFixed(1),
         weftLbs: '0',
-        totalEnds: wpi * width,
-        totalPicks: (cpi * length * 36) / 1000 + 'k courses',
+        totalEnds: Math.round(wpi * width),
+        totalPicks: Math.round((cpi * length * 36) / 1000) + 'k courses',
         warpRatio: 100,
         weftRatio: 0,
         costPerYard,
@@ -213,21 +215,21 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
         {/* Section Header */}
         <div className="lux-yield-demo-header">
           <div>
-            <div className="lux-mono" style={{ fontSize: '12px', color: 'var(--lux-emerald)', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '8px', letterSpacing: '1px', textTransform: 'uppercase' }}>
+            <div className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-emerald)', display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '10px', letterSpacing: '1.2px', textTransform: 'uppercase', fontWeight: '600' }}>
               <Calculator size={14} />
-              <span>Interactive Simulator</span>
+              <span>INTERACTIVE SIMULATOR</span>
             </div>
-            <h2 style={{ fontSize: '32px', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.02em', margin: 0 }}>
-              Textile Yield & GSM Engine
+            <h2 className="lux-yield-title">
+              Textile Yield &amp; GSM Engine
             </h2>
-            <p style={{ color: 'var(--lux-text-secondary)', fontSize: '14px', marginTop: '6px', maxWidth: '620px', lineHeight: '1.6' }}>
+            <p className="lux-yield-subtitle">
               Explore how yarn count, crimp percentage, and loom reed density dynamically compute physical fabric GSM, material consumption weight, and manufacturing cost in real time.
             </p>
           </div>
 
           {/* Preset Buttons */}
           <div className="lux-yield-presets-bar">
-            <span className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-text-muted)', textTransform: 'uppercase' }}>Presets:</span>
+            <span className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>PRESETS:</span>
             {PRESETS.map((p) => (
               <button
                 key={p.id}
@@ -248,10 +250,13 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
           <div className="lux-yield-controls-card">
             
             {/* Mode Tabs */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '22px', borderBottom: '1px solid var(--lux-border)', paddingBottom: '14px' }}>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '24px' }}>
               <button
                 type="button"
-                onClick={() => setMode('woven')}
+                onClick={() => {
+                  setMode('woven');
+                  setActivePreset(null);
+                }}
                 className={`lux-yield-mode-btn ${mode === 'woven' ? 'active' : ''}`}
               >
                 <Layers size={14} />
@@ -259,7 +264,10 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
               </button>
               <button
                 type="button"
-                onClick={() => setMode('knit')}
+                onClick={() => {
+                  setMode('knit');
+                  setActivePreset(null);
+                }}
                 className={`lux-yield-mode-btn ${mode === 'knit' ? 'active' : ''}`}
               >
                 <Grid3X3 size={14} />
@@ -270,7 +278,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
             {/* Inputs Grid */}
             <div className="lux-yield-inputs-layout">
 
-              {/* Warp / Wales Yarn Count */}
+              {/* Yarn Count */}
               <div className="lux-yield-input-group">
                 <div className="lux-yield-label-row">
                   <label>{mode === 'woven' ? 'Warp Yarn Count' : 'Yarn Count'}</label>
@@ -287,6 +295,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                     setActivePreset(null);
                   }}
                   className="lux-calc-slider"
+                  style={{ background: getSliderBg(warpCount, 6, 80) }}
                 />
               </div>
 
@@ -308,6 +317,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                       setActivePreset(null);
                     }}
                     className="lux-calc-slider"
+                    style={{ background: getSliderBg(weftCount, 6, 80) }}
                   />
                 </div>
               )}
@@ -316,7 +326,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
               <div className="lux-yield-input-group">
                 <div className="lux-yield-label-row">
                   <label>{mode === 'woven' ? 'Warp Density (EPI)' : 'Wales per Inch (WPI)'}</label>
-                  <span className="lux-mono highlight">{epi} {mode === 'woven' ? 'Ends/in' : 'WPI'}</span>
+                  <span className="lux-mono highlight">{epi} {mode === 'woven' ? 'EPI' : 'WPI'}</span>
                 </div>
                 <input
                   type="range"
@@ -329,6 +339,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                     setActivePreset(null);
                   }}
                   className="lux-calc-slider"
+                  style={{ background: getSliderBg(epi, 20, 160) }}
                 />
               </div>
 
@@ -336,7 +347,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
               <div className="lux-yield-input-group">
                 <div className="lux-yield-label-row">
                   <label>{mode === 'woven' ? 'Weft Density (PPI)' : 'Courses per Inch (CPI)'}</label>
-                  <span className="lux-mono highlight">{ppi} {mode === 'woven' ? 'Picks/in' : 'CPI'}</span>
+                  <span className="lux-mono highlight">{ppi} {mode === 'woven' ? 'PPI' : 'CPI'}</span>
                 </div>
                 <input
                   type="range"
@@ -349,11 +360,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                     setActivePreset(null);
                   }}
                   className="lux-calc-slider"
+                  style={{ background: getSliderBg(ppi, 20, 140) }}
                 />
               </div>
 
-              {/* Width & Order Length in 2-col */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              {/* Width & Order Length side-by-side */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 <div className="lux-yield-input-group">
                   <div className="lux-yield-label-row">
                     <label>Width</label>
@@ -365,8 +377,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                     max="80"
                     step="1"
                     value={width}
-                    onChange={(e) => setWidth(Number(e.target.value))}
+                    onChange={(e) => {
+                      setWidth(Number(e.target.value));
+                      setActivePreset(null);
+                    }}
                     className="lux-calc-slider"
+                    style={{ background: getSliderBg(width, 36, 80) }}
                   />
                 </div>
 
@@ -381,15 +397,19 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                     max="1000"
                     step="50"
                     value={length}
-                    onChange={(e) => setLength(Number(e.target.value))}
+                    onChange={(e) => {
+                      setLength(Number(e.target.value));
+                      setActivePreset(null);
+                    }}
                     className="lux-calc-slider"
+                    style={{ background: getSliderBg(length, 50, 1000) }}
                   />
                 </div>
               </div>
 
               {/* Crimp Sliders (woven mode) */}
               {mode === 'woven' && (
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                   <div className="lux-yield-input-group">
                     <div className="lux-yield-label-row">
                       <label>Warp Crimp</label>
@@ -401,8 +421,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                       max="20"
                       step="0.5"
                       value={warpCrimp}
-                      onChange={(e) => setWarpCrimp(Number(e.target.value))}
+                      onChange={(e) => {
+                        setWarpCrimp(Number(e.target.value));
+                        setActivePreset(null);
+                      }}
                       className="lux-calc-slider"
+                      style={{ background: getSliderBg(warpCrimp, 2, 20) }}
                     />
                   </div>
 
@@ -417,8 +441,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                       max="16"
                       step="0.5"
                       value={weftCrimp}
-                      onChange={(e) => setWeftCrimp(Number(e.target.value))}
+                      onChange={(e) => {
+                        setWeftCrimp(Number(e.target.value));
+                        setActivePreset(null);
+                      }}
                       className="lux-calc-slider"
+                      style={{ background: getSliderBg(weftCrimp, 2, 16) }}
                     />
                   </div>
                 </div>
@@ -436,8 +464,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                   max="12.00"
                   step="0.25"
                   value={pricePerLb}
-                  onChange={(e) => setPricePerLb(Number(e.target.value))}
+                  onChange={(e) => {
+                    setPricePerLb(Number(e.target.value));
+                    setActivePreset(null);
+                  }}
                   className="lux-calc-slider"
+                  style={{ background: getSliderBg(pricePerLb, 2.00, 12.00) }}
                 />
               </div>
 
@@ -449,10 +481,10 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
             
             {/* GSM Main Display */}
             <div className="lux-yield-gsm-hero">
-              <span className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
-                Predicted Fabric Density
+              <span className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-text-muted)', textTransform: 'uppercase', letterSpacing: '1.2px' }}>
+                PREDICTED FABRIC DENSITY
               </span>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', margin: '8px 0 4px' }}>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px', margin: '8px 0 6px' }}>
                 <span className="lux-yield-gsm-num">{calculations.gsm}</span>
                 <span style={{ fontSize: '18px', color: 'var(--lux-text-secondary)', fontWeight: '600' }}>g/m²</span>
                 <span className="lux-mono" style={{ fontSize: '13px', color: 'var(--lux-text-muted)', marginLeft: 'auto' }}>
@@ -461,7 +493,7 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
               </div>
 
               {/* Classification Tag */}
-              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '4px 10px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.05)', border: `1px solid ${fabricClass.color}40`, marginTop: '6px' }}>
+              <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '5px 12px', borderRadius: '6px', background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.1)', marginTop: '4px' }}>
                 <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: fabricClass.color, boxShadow: `0 0 8px ${fabricClass.color}` }} />
                 <span style={{ fontSize: '12px', fontWeight: '600', color: '#ffffff' }}>{fabricClass.label}</span>
               </div>
@@ -473,14 +505,14 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
                   style={{ left: `${Math.min(Math.max((calculations.gsm - 60) / (450 - 60) * 100, 2), 98)}%` }} 
                 />
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--lux-text-muted)', marginTop: '4px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', color: 'var(--lux-text-muted)', marginTop: '6px' }}>
                 <span>60 gsm (Sheer)</span>
                 <span>200 gsm (Mid)</span>
                 <span>450+ gsm (Denim)</span>
               </div>
             </div>
 
-            {/* Key Metrics Bento */}
+            {/* Key Metrics Bento (2x2 Grid) */}
             <div className="lux-yield-metrics-grid">
               
               {/* Total Yarn Weight */}
@@ -543,12 +575,12 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
 
             {/* Yarn Ratio Bar (Woven mode) */}
             {mode === 'woven' && (
-              <div style={{ marginTop: '20px', padding: '16px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--lux-border)' }}>
+              <div style={{ marginTop: '18px', padding: '14px 16px', borderRadius: '12px', background: 'rgba(255, 255, 255, 0.03)', border: '1px solid var(--lux-border)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--lux-text-secondary)', marginBottom: '8px' }}>
                   <span>Warp: <strong>{calculations.warpLbs} lbs ({calculations.warpRatio}%)</strong></span>
                   <span>Weft: <strong>{calculations.weftLbs} lbs ({calculations.weftRatio}%)</strong></span>
                 </div>
-                <div style={{ height: '8px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', display: 'flex', overflow: 'hidden' }}>
+                <div style={{ height: '7px', borderRadius: '4px', background: 'rgba(255, 255, 255, 0.08)', display: 'flex', overflow: 'hidden' }}>
                   <div style={{ width: `${calculations.warpRatio}%`, background: 'var(--lux-emerald)', transition: 'width 0.3s ease' }} />
                   <div style={{ width: `${calculations.weftRatio}%`, background: '#38bdf8', transition: 'width 0.3s ease' }} />
                 </div>
@@ -563,8 +595,8 @@ export default function YieldEngineDemo({ onLaunchStudioCalculations }) {
               </div>
             )}
 
-            {/* In-Studio Launch Link (Optional secondary) */}
-            <div style={{ marginTop: '22px', textAlign: 'center' }}>
+            {/* In-Studio Launch Link Button at the bottom */}
+            <div style={{ marginTop: 'auto', paddingTop: '20px' }}>
               <button
                 type="button"
                 onClick={onLaunchStudioCalculations}
