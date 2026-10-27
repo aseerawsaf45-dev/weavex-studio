@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import YieldEngineDemo from './components/YieldEngineDemo';
 import './LandingPage.css';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -178,13 +177,6 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
 
   // Live knit cam state
   const [activeCam, setActiveCam] = useState('knit');
-
-  const scrollToYieldDemo = () => {
-    const el = document.getElementById('yield-demo');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -550,39 +542,14 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
 
           {/* Card 5: Calculation Engine (Cols: 4 with Live Interactive Slider) */}
           <div 
-            id="calculations"
-            onClick={scrollToYieldDemo}
+            onClick={() => onSelectTool('calculations')}
             className="lux-bento-card lux-bento-sm-4"
-            style={{ cursor: 'pointer', scrollMarginTop: '100px' }}
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
               <div className="lux-icon-frame" style={{ color: 'var(--lux-emerald)' }}>
                 <Calculator size={22} />
               </div>
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToYieldDemo();
-                }}
-                className="lux-mono" 
-                style={{ 
-                  fontSize: '11px', 
-                  color: 'var(--lux-emerald)', 
-                  background: 'rgba(16, 185, 129, 0.12)',
-                  border: '1px solid rgba(16, 185, 129, 0.3)',
-                  padding: '3px 8px',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}
-                title="Explore Live Yield Engine Simulator"
-              >
-                <span>Live Demo</span>
-                <ArrowRight size={11} />
-              </button>
+              <span className="lux-mono" style={{ fontSize: '11px', color: 'var(--lux-emerald)' }}>Yield Engine</span>
             </div>
 
             <div>
@@ -614,7 +581,7 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  scrollToYieldDemo();
+                  onSelectTool('calculations');
                 }}
                 className="lux-mono" 
                 style={{ 
@@ -644,7 +611,7 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
                 }}
               >
                 <Calculator size={14} />
-                <span>Explore Interactive Yield Demo</span>
+                <span>Launch Calculations</span>
                 <ArrowRight size={13} />
               </button>
             </div>
@@ -652,9 +619,6 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
 
         </div>
       </section>
-
-      {/* LIVE YIELD ENGINE DEMO SECTION */}
-      <YieldEngineDemo onLaunchStudioCalculations={() => onSelectTool('calculations')} />
 
       {/* PINNED ARCHITECTURE SECTION */}
       <section ref={pinnedSectionRef} id="architecture" className="lux-pinned-section">
@@ -771,7 +735,7 @@ export default function LandingPage({ onLaunchStudio, onSelectTool }) {
             <button onClick={() => onSelectTool('knit')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>Knit Studio</button>
             <button onClick={() => onSelectTool('doublejersey')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>Double Jersey</button>
             <button onClick={() => onSelectTool('lapping')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>Lapping</button>
-            <button onClick={scrollToYieldDemo} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>Yield Engine Demo</button>
+            <button onClick={() => onSelectTool('calculations')} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>Calculations</button>
           </div>
 
           <div className="lux-mono" style={{ fontSize: '12px', color: 'var(--lux-text-secondary)' }}>
